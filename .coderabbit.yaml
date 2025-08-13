@@ -1,0 +1,13 @@
+# .coderabbit.yaml
+language: ko-KR
+
+reviews:
+  review_status: true          # 상태 배지 유지(끄려면 false)
+  commit_status: true          # 상태체크 등록
+  fail_commit_status: false    # 문제 발견해도 CI 실패로 만들지 않음
+
+  auto_review:
+    enabled: true              # 자동 리뷰 켜기
+    auto_incremental_review: true   # PR에 커밋 추가될 때마다 재리뷰
+    base_branches:
+      - develop                # 대상(base) 브랜치가 develop인 PR 전부 자동 리뷰
