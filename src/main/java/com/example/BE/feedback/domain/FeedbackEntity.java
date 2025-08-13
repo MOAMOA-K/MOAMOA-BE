@@ -5,7 +5,7 @@ import lombok.*;
 
 
 @Entity
-@Table(name = "Feedback")
+@Table(name = "feedback")
 @Getter
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,7 +25,7 @@ public class FeedbackEntity {
     private Long receiptId;
 
     @Column(name = "rating")
-    private Long rating;
+    private Integer rating;
 
     @Column(name = "content", length = 500)
     private String content;
@@ -35,7 +35,7 @@ public class FeedbackEntity {
 
     @Builder
     public FeedbackEntity(Long userId, Long storeId, Long receiptId,
-            Long rating, String content, String modifiedContent) {
+            Integer rating, String content, String modifiedContent) {
         this.userId = userId;
         this.storeId = storeId;
         this.receiptId = receiptId;
