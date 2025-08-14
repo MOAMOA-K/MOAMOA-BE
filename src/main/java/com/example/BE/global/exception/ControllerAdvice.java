@@ -13,7 +13,6 @@ public class ControllerAdvice {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e){
         ErrorResponse errorResponse = ErrorResponse.builder()
-            .httpStatus(e.getHttpStatus())
             .errorCode(e.getErrorCode())
             .message(e.getMessage()).build();
 
@@ -25,7 +24,6 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorResponse> handleException(Exception e){
         log.error("Unexpected Error: ", e);
         ErrorResponse errorResponse = ErrorResponse.builder()
-            .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
             .errorCode("E999")
             .message("서버 내부 오류입니다.").build();
 
