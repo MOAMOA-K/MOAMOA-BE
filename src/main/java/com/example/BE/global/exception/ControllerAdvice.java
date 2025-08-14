@@ -12,6 +12,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e){
+        log.warn("Handled CustomException: code={}, status={}, msg={}",
+            e.getErrorCode(), e.getHttpStatus(), e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.builder()
             .errorCode(e.getErrorCode())
             .message(e.getMessage()).build();
