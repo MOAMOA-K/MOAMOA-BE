@@ -22,9 +22,9 @@ public class UserApiController {
 
     private final UserService userService;
 
-    @GetMapping("/{user_id}")
+    @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUser(
-        @PathVariable(name="user_id") Long userId
+        @PathVariable Long userId
     ){
         UserResponse userResponse = userService.findById(userId);
         return ResponseEntity.status(HttpStatus.OK)
@@ -32,9 +32,9 @@ public class UserApiController {
     }
 
     // 유저 프로필 수정
-    @PatchMapping("/{user_id}")
+    @PatchMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(
-        @PathVariable("user_id") Long userId,
+        @PathVariable Long userId,
         @RequestBody UserUpdateRequest request
     ) {
         UserResponse userResponse = userService.updateProfile(userId, request);
@@ -43,9 +43,9 @@ public class UserApiController {
     }
 
     // 유저 삭제
-    @DeleteMapping("/{user_id}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<MessageResponse> deleteUser(
-        @PathVariable("user_id") Long userId
+        @PathVariable Long userId
     ) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.OK)
