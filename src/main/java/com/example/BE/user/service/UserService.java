@@ -25,6 +25,7 @@ public class UserService {
     }
 
     // 유저 프로필 수정
+    @Transactional
     public UserResponse updateProfile(Long userId, UserUpdateRequest request) {
         UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
@@ -35,6 +36,7 @@ public class UserService {
     }
 
     // 유저 삭제
+    @Transactional
     public void deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw CustomException.from(UserErrorCode.NOT_FOUND);
