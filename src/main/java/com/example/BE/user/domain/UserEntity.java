@@ -42,4 +42,11 @@ public class UserEntity {
         this.role = role;
         this.points = points;
     }
+
+    // 현재는 nickname만 수정이 가능합니다.
+    public void updateNickname(String nickname) {
+        if (nickname != null && !nickname.isBlank()) {
+            this.nickname = nickname;
+        }
+    }
 }
