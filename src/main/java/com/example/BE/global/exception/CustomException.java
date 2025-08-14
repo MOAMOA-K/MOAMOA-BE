@@ -8,13 +8,12 @@ import org.springframework.http.HttpStatus;
 public class CustomException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final String errorCode;
-    private final String errorMessage;
 
     private CustomException(ErrorCode errorCode) {
+        // detailMessage field로 message를 전달합니다.
         super(errorCode.message());
         this.httpStatus = errorCode.httpStatus();
         this.errorCode = errorCode.code();
-        this.errorMessage = errorCode.message();
     }
 
     public static CustomException from(ErrorCode errorCode) {
