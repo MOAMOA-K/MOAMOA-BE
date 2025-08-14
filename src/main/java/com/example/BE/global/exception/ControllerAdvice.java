@@ -27,7 +27,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.warn("Handled CustomException: status={}, msg={}",
+        log.warn("Validation exception: status={}, msg={}",
             e.getStatusCode(), e.getMessage());
 
         // valid 조건을 여러 개 위배했을 수도 있음.
