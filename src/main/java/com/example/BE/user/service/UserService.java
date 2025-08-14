@@ -19,17 +19,14 @@ public class UserService {
 
     // 단일 유저 조회
     public UserResponse findById(Long userId) {
-        UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
+        UserEntity user = findByIdOrThrow(userId);
         return UserResponse.from(user);
     }
 
     // 유저 프로필 수정
     @Transactional
     public UserResponse updateProfile(Long userId, UserUpdateRequest request) {
-        UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
-
+        UserEntity user = findByIdOrThrow(userId);
         user.updateNickname(request.nickname());
 
         return UserResponse.from(user);
@@ -38,9 +35,12 @@ public class UserService {
     // 유저 삭제
     @Transactional
     public void deleteUser(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw CustomException.from(UserErrorCode.NOT_FOUND);
-        }
+        findByIdOrThrow(userId);
         userRepository.deleteById(userId);
+    }
+
+    private UserEntity findByIdOrThrow(Long userId){
+        return userRepository.findById(userId)
+            .orElseThrow(()->CustomException.from(UserErrorCode.NOT_FOUND));
     }
 }
