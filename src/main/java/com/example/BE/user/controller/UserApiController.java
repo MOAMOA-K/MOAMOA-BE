@@ -4,6 +4,7 @@ import com.example.BE.user.domain.dto.MessageResponse;
 import com.example.BE.user.domain.dto.UserResponse;
 import com.example.BE.user.domain.dto.UserUpdateRequest;
 import com.example.BE.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class UserApiController {
     @PatchMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(
         @PathVariable Long userId,
-        @RequestBody UserUpdateRequest request
+        @Valid @RequestBody UserUpdateRequest request
     ) {
         UserResponse userResponse = userService.updateProfile(userId, request);
         return ResponseEntity.status(HttpStatus.OK)
