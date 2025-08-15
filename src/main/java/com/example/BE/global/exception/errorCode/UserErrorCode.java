@@ -9,7 +9,8 @@ public enum UserErrorCode implements ErrorCode {
     INVALID_EMAIL_PASSWORD(HttpStatus.UNAUTHORIZED, "U002", "잘못된 이메일, 비밀번호 조합입니다."),
     REQUIRED_LOGIN(HttpStatus.UNAUTHORIZED, "U003", "로그인이 필요합니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT,  "U004", "이미 존재하는 이메일입니다."),
-    NOT_ADMIN(HttpStatus.FORBIDDEN, "U005", "어드민이 아닙니다.");
+    NOT_ADMIN(HttpStatus.FORBIDDEN, "U005", "어드민이 아닙니다."),
+    NOT_ALLOWED_ADMIN(HttpStatus.FORBIDDEN, "U006", "어드민 계정 생성은 관리자에게 문의해주세요");
 
     private final HttpStatus httpStatus;
     private final String code;

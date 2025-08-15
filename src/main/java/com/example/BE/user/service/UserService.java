@@ -7,6 +7,7 @@ import com.example.BE.global.exception.errorCode.UserErrorCode;
 import com.example.BE.global.jwt.JwtUtil;
 import com.example.BE.global.jwt.TokenResponse;
 import com.example.BE.user.domain.UserEntity;
+import com.example.BE.user.domain.UserEntity.UserRole;
 import com.example.BE.user.domain.dto.UserResponse;
 import com.example.BE.user.domain.dto.UserUpdateRequest;
 import com.example.BE.user.repository.UserRepository;
@@ -55,6 +56,12 @@ public class UserService {
         if(userRepository.existsByEmail(signupRequest.email())){
             throw CustomException.from(UserErrorCode.DUPLICATE_EMAIL);
         }
+
+        // userRole을 어드민으로 요청하면 바로 예외 발생
+        if(signupRequest.role()== UserRole.ROLE_ADMIN){
+            throw CustomException.from(UserErrorCode.NOT_ALLOWED_ADMIN);
+        }
+
         UserEntity user = UserEntity.from(signupRequest, passwordEncoder);
         return UserResponse.from(userRepository.save(user));
     }
