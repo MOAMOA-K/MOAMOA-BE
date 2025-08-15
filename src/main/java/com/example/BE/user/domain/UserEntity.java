@@ -1,7 +1,9 @@
 package com.example.BE.user.domain;
 
+import com.example.BE.auth.domain.SignupRequest;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Table(name = "user")
@@ -35,9 +37,9 @@ public class UserEntity {
     private Long points;
 
     @Builder
-    public UserEntity(String email, String password, String nickname, UserRole role, Long points) {
+    public UserEntity(String email, String password, String nickname, UserRole role, Long points, PasswordEncoder passwordEncoder) {
         this.email = email;
-        this.password = password;
+        this.password = passwordEncoder.encode(password);
         this.nickname = nickname;
         this.role = role;
         this.points = points;
@@ -48,5 +50,16 @@ public class UserEntity {
         if (nickname != null && !nickname.isBlank()) {
             this.nickname = nickname;
         }
+    }
+
+    public static UserEntity from(SignupRequest signupRequest, PasswordEncoder passwordEncoder){
+        return new UserEntity(
+            signupRequest.email(),
+            signupRequest.password(),
+            signupRequest.nickname(),
+            signupRequest.role(),
+            0L,
+            passwordEncoder
+        );
     }
 }
