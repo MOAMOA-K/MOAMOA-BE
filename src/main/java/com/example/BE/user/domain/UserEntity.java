@@ -1,6 +1,7 @@
 package com.example.BE.user.domain;
 
 import com.example.BE.auth.domain.SignupRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -26,16 +27,22 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "email", length = 32)
+
+    @Column(name = "email", length = 32, nullable = false, unique = true)
     private String email;
-    @Column(name = "password")
+
+    @Column(name = "password", nullable = false)
+    @JsonIgnore
     private String password;
-    @Column(name = "nickname", length = 16)
+
+    @Column(name = "nickname", length = 16, nullable = false)
     private String nickname;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", length = 20)
+    @Column(name = "role", length = 20, nullable = false)
     private UserRole role;
-    @Column(name = "points")
+
+    @Column(name = "points", nullable = false)
     private Long points;
 
     private UserEntity(String email, String password, String nickname, UserRole role, Long points) {
