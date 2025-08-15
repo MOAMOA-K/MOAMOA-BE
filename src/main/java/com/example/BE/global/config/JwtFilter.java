@@ -3,7 +3,6 @@ package com.example.BE.global.config;
 import com.example.BE.global.exception.errorCode.TokenErrorCode;
 import com.example.BE.global.jwt.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
 @Slf4j
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -37,45 +38,40 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // authorization이 비어있으면 일단 security context로 넘김 -> login/signup 같은 허용 경로는
         // 여기 조건문에 걸려서 일단 다음 filter로 넘어감.
-        if (authorization == null ) {
+        if (authorization == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // 토큰이 Bearer로 시작하지 않으면 바로 errorResponse 전달
-        if(!authorization.startsWith("Bearer ")){
+        if (!authorization.startsWith("Bearer ")) {
             log.warn("Invalid Token: {}", authorization);
             setErrorResponse(response, TokenErrorCode.INVALID_TOKEN);
             return;
         }
 
-        try {
-            // Bearer 부분을 떼고 token만 추출
-            String token = authorization.split(" ")[1];
+        // Bearer 부분을 떼고 token만 추출
+        String token = authorization.substring("Bearer ".length());
 
-            // 토큰 유효성 검사: 만료 여부, 형식 다 한 번에 체크함.
-            if(!jwtUtil.validateToken(token)){
-                throw new JwtException("Token validation failed");
-            }
-
-            // SecurityContext에 등록
-            String email = jwtUtil.getEmail(token);
-            String userRole = jwtUtil.getRole(token);
-
-            UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, null, List.of(
-                    new SimpleGrantedAuthority(userRole)
-                ));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-            // next filter
-            filterChain.doFilter(request, response);
-
-        } catch(JwtException e){
-            log.warn("Invalid Token: {}", e.getMessage());
+        // 토큰 유효성 검사: 만료 여부, 형식 다 한 번에 체크함.
+        if (!jwtUtil.validateToken(token)) {
             setErrorResponse(response, TokenErrorCode.INVALID_TOKEN);
             return;
         }
+
+        // SecurityContext에 등록
+        String email = jwtUtil.getEmail(token);
+        String userRole = jwtUtil.getRole(token);
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(email, null, List.of(
+                new SimpleGrantedAuthority(userRole)
+            ));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        // next filter
+        filterChain.doFilter(request, response);
+
     }
 
     private void setErrorResponse(HttpServletResponse response, TokenErrorCode errorCode)

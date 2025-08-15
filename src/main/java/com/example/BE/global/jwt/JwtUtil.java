@@ -15,14 +15,18 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class JwtUtil {
-    private final SecretKey secretKey;
 
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+    private final SecretKey secretKey;
+    private final Long expiryTime;
+
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret,
+        @Value("${spring.jwt.expiryTime}") Long expiryTime) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expiryTime = expiryTime;
     }
 
     // claim 추출
-    private Claims getClaims(String token){
+    private Claims getClaims(String token) {
         return Jwts.parser()
             .verifyWith(secretKey)
             .build()
@@ -30,7 +34,7 @@ public class JwtUtil {
             .getPayload();
     }
 
-    public Long getId(String token){
+    public Long getId(String token) {
         return getClaims(token).get("id", Long.class);
     }
 
@@ -43,11 +47,11 @@ public class JwtUtil {
     }
 
     // 토큰 유효성 검사
-    public boolean validateToken(String token){
-        try{
+    public boolean validateToken(String token) {
+        try {
             getClaims(token);
             return true;
-        }catch(JwtException e){
+        } catch (JwtException e) {
             log.warn("Invalid Token(validateToken method): {}", e.getMessage());
             return false;
         }
@@ -55,7 +59,7 @@ public class JwtUtil {
 
     // 토큰 생성
     public String generateToken(Long userId, String email, UserRole role) {
-        long expireTimeMs = 1000 * 60 * 60; // 유효기간 1시간
+        long expireTimeMs = expiryTime; // 유효기간 1시간
         Date now = new Date();
 
         return Jwts.builder()

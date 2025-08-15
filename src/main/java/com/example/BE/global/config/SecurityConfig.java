@@ -17,8 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtUtil jwtUtil;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,7 +33,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtFilter(jwtUtil, new ObjectMapper()), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 }
