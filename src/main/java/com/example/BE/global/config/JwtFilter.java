@@ -51,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             // Bearer 부분을 떼고 token만 추출
-            String token = authorization.split(" ")[1];
+            String token = authorization.substring("Bearer ".length());
 
             // 토큰 유효성 검사: 만료 여부, 형식 다 한 번에 체크함.
             if(!jwtUtil.validateToken(token)){
