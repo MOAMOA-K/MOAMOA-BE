@@ -16,9 +16,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class JwtUtil {
     private final SecretKey secretKey;
+    private final Long expiryTime;
 
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret, @Value("${spring.jwt.expiryTime}") Long expiryTime,) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expiryTime = expiryTime;
     }
 
     // claim 추출
@@ -55,7 +57,7 @@ public class JwtUtil {
 
     // 토큰 생성
     public String generateToken(Long userId, String email, UserRole role) {
-        long expireTimeMs = 1000 * 60 * 60; // 유효기간 1시간
+        long expireTimeMs = expiryTime; // 유효기간 1시간
         Date now = new Date();
 
         return Jwts.builder()

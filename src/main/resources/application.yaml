@@ -24,6 +24,8 @@ spring:
         format_sql: true
   jwt:
     secret: ${SECRET_KEY}
+    # 토큰 유효기간: 1시간
+    expiryTime: 3600000 
 
 # 요청 응답에 모두 한글 인코딩 강제 적용
 server:
