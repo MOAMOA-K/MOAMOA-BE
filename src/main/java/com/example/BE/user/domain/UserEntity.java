@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,8 +38,7 @@ public class UserEntity {
     @Column(name = "points")
     private Long points;
 
-    @Builder
-    public UserEntity(String email, String password, String nickname, UserRole role, Long points) {
+    private UserEntity(String email, String password, String nickname, UserRole role, Long points) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
