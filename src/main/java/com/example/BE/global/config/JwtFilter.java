@@ -35,8 +35,15 @@ public class JwtFilter extends OncePerRequestFilter {
         // Bearer + token string 추출
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        // authorization이 비어있거나 Bearer로 시작하지 않으면 다음 필터로 일단 넘김
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
+        // authorization이 비어있으면 일단 security context로 넘김 -> login/signup 같은 허용 경로는
+        // 여기 조건문에 걸려서 일단 다음 filter로 넘어감.
+        if (authorization == null ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 토큰이 Bearer로 시작하지 않으면 바로 errorResponse 전달
+        if(!authorization.startsWith("Bearer ")){
             log.warn("Invalid Token: {}", authorization);
             setErrorResponse(response, TokenErrorCode.INVALID_TOKEN);
             return;
