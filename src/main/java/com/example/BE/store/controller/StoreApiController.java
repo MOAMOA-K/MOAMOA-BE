@@ -5,6 +5,7 @@ import com.example.BE.store.domain.dto.StoreDetailResponse;
 import com.example.BE.store.domain.dto.StoreResponse;
 import com.example.BE.store.domain.dto.StoreUpdateRequest;
 import com.example.BE.store.service.StoreService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class StoreApiController {
     @PostMapping
     public ResponseEntity<StoreResponse> createStore(
         @AuthenticationPrincipal Long userId,
-        @RequestBody StoreCreateRequest request
+        @Valid @RequestBody StoreCreateRequest request
     ) {
         StoreResponse response = storeService.createStore(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
