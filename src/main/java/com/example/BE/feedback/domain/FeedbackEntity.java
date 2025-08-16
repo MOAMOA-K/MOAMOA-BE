@@ -33,6 +33,18 @@ public class FeedbackEntity {
     @Column(name = "modified_content", length = 500)
     private String modifiedContent;
 
+    @Column(name = "reply", length = 255)
+    private String reply;
+
+    @Enumerated(EnumType.STRING)
+    private FeedbackStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private FeedbackType type;
+
+
+
+
     @Builder
     public FeedbackEntity(Long userId, Long storeId, Long receiptId,
             Integer rating, String content, String modifiedContent) {
