@@ -2,7 +2,8 @@ package com.example.BE.menu.domain.dto;
 
 public record MenuUpdateRequest(
     String name,
-    Integer price, // int 대신 Integer를 사용하여 null 체크 -> 애매함
+    // 수정 요청 시에 null을 받을 수 있도록 Wrapper 사용.(의도함)
+    Integer price,
     String description,
     String imageUrl
 ) {}
