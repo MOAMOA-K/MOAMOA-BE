@@ -8,6 +8,7 @@ import com.example.BE.store.domain.dto.StoreDetailResponse;
 import com.example.BE.store.domain.dto.StoreResponse;
 import com.example.BE.store.domain.dto.StoreUpdateRequest;
 import com.example.BE.store.repository.StoreRepository;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -73,8 +74,13 @@ public class StoreService {
     }
 
     @Transactional
-    public void deleteStore(Long storeId) {
-        findByIdOrThrow(storeId);
+    public void deleteStore(Long userId, Long storeId) {
+        StoreEntity store = findByIdOrThrow(storeId);
+
+        if(!store.getUserId().equals(userId)){
+            throw CustomException.from(StoreErrorCode.FORBIDDEN_STORE_ACCESS);
+        }
+
         storeRepository.deleteById(storeId);
     }
 

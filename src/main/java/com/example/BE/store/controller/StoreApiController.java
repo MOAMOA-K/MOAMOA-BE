@@ -70,9 +70,10 @@ public class StoreApiController {
     // ADMIN 전용 API로 변경 예정
     @DeleteMapping("/{storeId}")
     public ResponseEntity<Void> deleteStore(
+        @AuthenticationPrincipal Long userId,
         @PathVariable Long storeId
     ) {
-        storeService.deleteStore(storeId);
+        storeService.deleteStore(userId, storeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
