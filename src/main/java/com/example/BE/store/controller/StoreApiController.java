@@ -60,7 +60,7 @@ public class StoreApiController {
     public ResponseEntity<StoreResponse> updateStore(
         @AuthenticationPrincipal Long userId,
         @PathVariable Long storeId,
-        @RequestBody StoreUpdateRequest request
+        @Valid @RequestBody StoreUpdateRequest request
     ) {
         StoreResponse response = storeService.updateStore(storeId, request, userId);
         return ResponseEntity.status(HttpStatus.OK)
