@@ -38,6 +38,7 @@ public class StoreEntity{
     @Column(name = "description", length = 255)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", length = 128, nullable = false)
     private StoreCategory category;
 
