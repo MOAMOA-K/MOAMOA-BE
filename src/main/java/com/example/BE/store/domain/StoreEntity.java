@@ -1,5 +1,6 @@
 package com.example.BE.store.domain;
 
+import com.example.BE.store.domain.dto.StoreUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,7 +33,7 @@ public class StoreEntity{
     private Double latitude;
 
     @Column(name="longitude", nullable = false)
-    private Double Longitude;
+    private Double longitude;
 
     @Column(name = "description", length = 255)
     private String description;
@@ -55,5 +56,20 @@ public class StoreEntity{
         FASTFOOD,
         BAR,
         OTHERS
+    }
+
+    // 정보 수정 메서드
+    public void update(StoreUpdateRequest request) {
+        if (request.name() != null) {
+            this.name = request.name();
+            this.canonicalName = request.name().replaceAll("\\s+", "");
+        }
+        if (request.address() != null) this.address = request.address();
+        if (request.description() != null) this.description = request.description();
+        if(request.latitude()!=null)  this.latitude = request.latitude();
+        if(request.longitude()!=null)  this.longitude= request.longitude();
+        if (request.category() != null) this.category = request.category();
+        if (request.imageUrl() != null) this.imageUrl = request.imageUrl();
+        if (request.openingTime() != null) this.openingTime = request.openingTime();
     }
 }
