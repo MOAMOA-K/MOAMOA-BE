@@ -1,5 +1,7 @@
-package com.example.BE.menu.domain; // 패키지 경로는 프로젝트에 맞게 조정하세요.
+package com.example.BE.menu.domain;
 
+import com.example.BE.menu.domain.dto.MenuCreateRequest;
+import com.example.BE.menu.domain.dto.MenuUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,11 +42,21 @@ public class MenuEntity {
         this.imageUrl = imageUrl;
     }
 
+    public static MenuEntity from(MenuCreateRequest request){
+        return new MenuEntity(
+            request.storeId(),
+            request.name(),
+            request.price(),
+            request.description(),
+            request.imageUrl()
+        );
+    }
+
     // 메뉴 정보 수정
-    public void update(String name, int price, String description, String imageUrl) {
-        if (name != null) this.name = name;
-        if (price > 0) this.price = price; // 가격은 0보다 클 때만 수정되도록 설계
-        if (description != null) this.description = description;
-        if (imageUrl != null) this.imageUrl = imageUrl;
+    public void update(MenuUpdateRequest request) {
+        if (request.name() != null) this.name = request.name();
+        if (request.price()!=null && request.price() > 0) this.price = request.price();
+        if (request.description() != null) this.description = request.description();
+        if (request.imageUrl() != null) this.imageUrl = request.imageUrl();
     }
 }
