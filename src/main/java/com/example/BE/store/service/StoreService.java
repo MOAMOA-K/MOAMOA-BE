@@ -32,7 +32,7 @@ public class StoreService {
         StoreEntity newStore = StoreEntity.builder()
             .userId(userId)
             .name(request.name())
-            .canonicalName(request.name().replaceAll(" ", ""))
+            .canonicalName(request.name().replaceAll("\\s+", ""))
             .address(request.address())
             .latitude(request.latitude())
             .longitude(request.longitude())
