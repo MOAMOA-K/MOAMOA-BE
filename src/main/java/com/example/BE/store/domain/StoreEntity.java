@@ -1,8 +1,21 @@
 package com.example.BE.store.domain;
 
 import com.example.BE.store.domain.dto.StoreUpdateRequest;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "store")
@@ -11,7 +24,7 @@ import lombok.*;
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class StoreEntity{
+public class StoreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,16 +36,16 @@ public class StoreEntity{
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name="canonical_name", length=20)
+    @Column(name = "canonical_name", length = 20)
     private String canonicalName;
 
     @Column(name = "address", length = 255, nullable = false)
     private String address;
 
-    @Column(name="latitude", nullable = false)
+    @Column(name = "latitude", nullable = false)
     private Double latitude;
 
-    @Column(name="longitude", nullable = false)
+    @Column(name = "longitude", nullable = false)
     private Double longitude;
 
     @Column(name = "description", length = 255)
@@ -45,10 +58,39 @@ public class StoreEntity{
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
-    @Column(name="opening_time")
+    @Column(name = "opening_time")
     private String openingTime;
 
-    public enum StoreCategory{
+    // 정보 수정 메서드
+    public void update(StoreUpdateRequest request) {
+        if (request.name() != null) {
+            this.name = request.name();
+            this.canonicalName = request.name().replaceAll("\\s+", "");
+        }
+        if (request.address() != null) {
+            this.address = request.address();
+        }
+        if (request.description() != null) {
+            this.description = request.description();
+        }
+        if (request.latitude() != null) {
+            this.latitude = request.latitude();
+        }
+        if (request.longitude() != null) {
+            this.longitude = request.longitude();
+        }
+        if (request.category() != null) {
+            this.category = request.category();
+        }
+        if (request.imageUrl() != null) {
+            this.imageUrl = request.imageUrl();
+        }
+        if (request.openingTime() != null) {
+            this.openingTime = request.openingTime();
+        }
+    }
+
+    public enum StoreCategory {
         KOREAN,
         CHINESE,
         JAPANESE,
@@ -57,20 +99,5 @@ public class StoreEntity{
         FASTFOOD,
         BAR,
         OTHERS
-    }
-
-    // 정보 수정 메서드
-    public void update(StoreUpdateRequest request) {
-        if (request.name() != null) {
-            this.name = request.name();
-            this.canonicalName = request.name().replaceAll("\\s+", "");
-        }
-        if (request.address() != null) this.address = request.address();
-        if (request.description() != null) this.description = request.description();
-        if(request.latitude()!=null)  this.latitude = request.latitude();
-        if(request.longitude()!=null)  this.longitude= request.longitude();
-        if (request.category() != null) this.category = request.category();
-        if (request.imageUrl() != null) this.imageUrl = request.imageUrl();
-        if (request.openingTime() != null) this.openingTime = request.openingTime();
     }
 }
