@@ -55,7 +55,7 @@ public class MenuEntity {
     // 메뉴 정보 수정
     public void update(MenuUpdateRequest request) {
         if (request.name() != null) this.name = request.name();
-        if (request.price()!=null && request.price() > 0) this.price = request.price();
+        if (request.price()!=null && request.price() >= 0) this.price = request.price();
         if (request.description() != null) this.description = request.description();
         if (request.imageUrl() != null) this.imageUrl = request.imageUrl();
     }
