@@ -1,45 +1,103 @@
 package com.example.BE.store.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.BE.store.domain.dto.StoreUpdateRequest;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "store")
+@Builder
 @Getter
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StoreEntity{
+@AllArgsConstructor
+public class StoreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "name", length = 20)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "address", length = 255)
+    @Column(name = "canonical_name", length = 20)
+    private String canonicalName;
+
+    @Column(name = "address", length = 255, nullable = false)
     private String address;
+
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
 
     @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "category", length = 128)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 128, nullable = false)
+    private StoreCategory category;
 
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
-    @Builder
-    public StoreEntity(Long userId, String name, String address, String description,
-            String category, String imageUrl) {
-        this.userId = userId;
-        this.name = name;
-        this.address = address;
-        this.description = description;
-        this.category = category;
-        this.imageUrl = imageUrl;
+    @Column(name = "opening_time")
+    private String openingTime;
+
+    // 정보 수정 메서드
+    public void update(StoreUpdateRequest request) {
+        if (request.name() != null) {
+            this.name = request.name();
+            this.canonicalName = request.name().replaceAll("\\s+", "");
+        }
+        if (request.address() != null) {
+            this.address = request.address();
+        }
+        if (request.description() != null) {
+            this.description = request.description();
+        }
+        if (request.latitude() != null) {
+            this.latitude = request.latitude();
+        }
+        if (request.longitude() != null) {
+            this.longitude = request.longitude();
+        }
+        if (request.category() != null) {
+            this.category = request.category();
+        }
+        if (request.imageUrl() != null) {
+            this.imageUrl = request.imageUrl();
+        }
+        if (request.openingTime() != null) {
+            this.openingTime = request.openingTime();
+        }
+    }
+
+    public enum StoreCategory {
+        KOREAN,
+        CHINESE,
+        JAPANESE,
+        WESTERN,
+        CAFE,
+        FASTFOOD,
+        BAR,
+        OTHERS
     }
 }
