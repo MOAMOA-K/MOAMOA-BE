@@ -61,12 +61,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // SecurityContext에 등록
         Long userId = jwtUtil.getId(token);
-        String email = jwtUtil.getEmail(token);
         String userRole = jwtUtil.getRole(token);
 
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(userId, null, List.of(
-                new SimpleGrantedAuthority(email),
                 new SimpleGrantedAuthority(userRole)
             ));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
