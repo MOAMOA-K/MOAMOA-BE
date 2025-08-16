@@ -85,7 +85,8 @@ public class UserService {
     }
 
     // 로그아웃
-    public void logout(String email){
+    public void logout(Long userId){
+        String email = findByIdOrThrow(userId).getEmail();
         log.info("logout reqeust by : {}", email);
     }
 

@@ -39,9 +39,9 @@ public class AuthApiController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
-        @AuthenticationPrincipal String email
+        @AuthenticationPrincipal Long userId
     ){
-        userService.logout(email);
+        userService.logout(userId);
         return ResponseEntity.status(HttpStatus.OK)
             .body(MessageResponse.from("로그아웃되었습니다."));
     }
