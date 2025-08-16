@@ -5,41 +5,55 @@ import lombok.*;
 
 @Entity
 @Table(name = "store")
+@Builder
 @Getter
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class StoreEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "name", length = 20)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "address", length = 255)
+    @Column(name="canonical_name", length=20, nullable = false)
+    private String canonicalName;
+
+    @Column(name = "address", length = 255, nullable = false)
     private String address;
+
+    @Column(name="latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name="longitude", nullable = false)
+    private Double Longitude;
 
     @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "category", length = 128)
-    private String category;
+    @Column(name = "category", length = 128, nullable = false)
+    private StoreCategory category;
 
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
-    @Builder
-    public StoreEntity(Long userId, String name, String address, String description,
-            String category, String imageUrl) {
-        this.userId = userId;
-        this.name = name;
-        this.address = address;
-        this.description = description;
-        this.category = category;
-        this.imageUrl = imageUrl;
+    @Column(name="opening_time")
+    private String openingTime;
+
+    public enum StoreCategory{
+        KOREAN,
+        CHINESE,
+        JAPANESE,
+        WESTERN,
+        CAFE,
+        FASTFOOD,
+        BAR,
+        OTHERS
     }
 }
