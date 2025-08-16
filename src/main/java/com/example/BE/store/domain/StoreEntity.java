@@ -23,7 +23,7 @@ public class StoreEntity{
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name="canonical_name", length=20, nullable = false)
+    @Column(name="canonical_name", length=20)
     private String canonicalName;
 
     @Column(name = "address", length = 255, nullable = false)

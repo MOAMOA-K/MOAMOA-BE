@@ -9,6 +9,7 @@ import com.example.BE.store.domain.dto.StoreResponse;
 import com.example.BE.store.domain.dto.StoreUpdateRequest;
 import com.example.BE.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -29,6 +31,7 @@ public class StoreService {
         StoreEntity newStore = StoreEntity.builder()
             .userId(userId)
             .name(request.name())
+            .canonicalName(request.name().replaceAll(" ", ""))
             .address(request.address())
             .latitude(request.latitude())
             .longitude(request.longitude())
@@ -58,6 +61,10 @@ public class StoreService {
     public StoreResponse updateStore(Long storeId, StoreUpdateRequest request, Long userId) {
         StoreEntity store = findByIdOrThrow(storeId);
         // 가게 주인 본인인지 확인
+//        log.info("storeId: {}", storeId);
+//        log.info("store userId: {}", store.getUserId());
+//        log.info("request userId: {}", userId);
+
         if (!store.getUserId().equals(userId)) {
             throw CustomException.from(StoreErrorCode.FORBIDDEN_STORE_ACCESS);
         }
