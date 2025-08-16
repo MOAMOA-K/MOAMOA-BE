@@ -48,7 +48,7 @@ public class StoreApiController {
     public ResponseEntity<List<StoreResponse>> getStoreList(
         @RequestParam Double latitude,
         @RequestParam Double longitude,
-        @RequestParam String keyword
+        @RequestParam(required = false, defaultValue = "") String keyword
     ) {
         List<StoreResponse> response = storeService.searchStores(latitude, longitude, keyword);
         return ResponseEntity.status(HttpStatus.OK)
