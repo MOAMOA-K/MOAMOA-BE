@@ -4,6 +4,7 @@ import com.example.BE.menu.domain.dto.MenuCreateRequest;
 import com.example.BE.menu.domain.dto.MenuResponse;
 import com.example.BE.menu.domain.dto.MenuUpdateRequest;
 import com.example.BE.menu.service.MenuService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class MenuApiController {
     @PostMapping
     public ResponseEntity<MenuResponse> createMenu(
         @AuthenticationPrincipal Long userId,
-        @RequestBody MenuCreateRequest request
+        @Valid @RequestBody MenuCreateRequest request
     ) {
         MenuResponse response = menuService.createMenu(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
