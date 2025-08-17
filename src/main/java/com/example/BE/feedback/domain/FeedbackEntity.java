@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "feedback")
+@Table(name = "feedbacks")
 @Getter
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
