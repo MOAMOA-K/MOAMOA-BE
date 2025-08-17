@@ -10,9 +10,13 @@ import com.example.BE.feedback.domain.event.FeedbackCreatedEvent;
 import com.example.BE.feedback.repository.FeedbackRepository;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.FeedbackErrorCode;
+import com.example.BE.global.exception.errorCode.UserErrorCode;
 import com.example.BE.global.tx.EventTxPublisher;
 import com.example.BE.receipt.domain.ReceiptEntity;
 import com.example.BE.receipt.service.ReceiptService;
+import com.example.BE.user.domain.UserEntity;
+import com.example.BE.user.repository.UserRepository;
+import com.example.BE.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +32,8 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final ReceiptService receiptService;
     private final EventTxPublisher eventPublisher;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Transactional
     public void createFeedback(FeedbackCreateRequest request, Long userId) {
@@ -35,6 +41,8 @@ public class FeedbackService {
 
         FeedbackEntity feedback = request.toEntity(userId, receiptEntity);
         feedbackRepository.save(feedback);
+
+        addUserPoints(userId);
 
         eventPublisher.publish(new FeedbackCreatedEvent(feedback.getId()));
     }
@@ -73,5 +81,12 @@ public class FeedbackService {
 
         feedback.reply(replyContent);
         feedbackRepository.save(feedback);
+    }
+
+    private void addUserPoints(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
+
+        user.addPoints(300L);
     }
 }
