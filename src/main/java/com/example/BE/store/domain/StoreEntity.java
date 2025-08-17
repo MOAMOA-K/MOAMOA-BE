@@ -13,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,16 +63,16 @@ public class StoreEntity {
     private StoreEntity(Long userId, String name, String canonicalName, String address,
         Double latitude, Double longitude, String description, StoreCategory category,
         String imageUrl, String openingTime) {
-            this.userId=userId;
-            this.name=name;
-            this.canonicalName=canonicalName;
-            this.address=address;
-            this.latitude=latitude;
-            this.longitude=longitude;
-            this.description=description;
-            this.category=category;
-            this.imageUrl=imageUrl;
-            this.openingTime=openingTime;
+        this.userId = userId;
+        this.name = name;
+        this.canonicalName = canonicalName;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.description = description;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.openingTime = openingTime;
     }
 
     public static StoreEntity of(Long userId, StoreCreateRequest request) {
