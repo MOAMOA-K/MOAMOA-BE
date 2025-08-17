@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     (select (count(uc))      from UserCouponEntity uc       where uc.userId = u.id and uc.isUsed = false)
                 )
                 from UserEntity u
-                where u.id = 1
+                where u.id = :userId
             """)
     UserDetailResponse findMyInfo(@Param("userId") Long userId);
 
