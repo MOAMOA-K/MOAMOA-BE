@@ -1,7 +1,19 @@
 package com.example.BE.feedback.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
@@ -43,16 +55,23 @@ public class FeedbackEntity {
     private FeedbackType type;
 
 
-
-
     @Builder
-    public FeedbackEntity(Long userId, Long storeId, Long receiptId,
-            Integer rating, String content, String modifiedContent) {
+    public FeedbackEntity(
+            Long userId,
+            Long storeId,
+            Long receiptId,
+            Integer rating,
+            String content,
+            FeedbackType type
+    ) {
         this.userId = userId;
         this.storeId = storeId;
         this.receiptId = receiptId;
         this.rating = rating;
         this.content = content;
-        this.modifiedContent = modifiedContent;
+        this.modifiedContent = null;
+        this.reply = null;
+        this.status = FeedbackStatus.UNREAD;
+        this.type = type;
     }
 }
