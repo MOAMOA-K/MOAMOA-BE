@@ -59,19 +59,15 @@ public class AnnouncementService {
             .toList();
 
         // 이후 feedbackId에 따라 빠른 조회를 위해 Map<>으로 변환
-        Map<Long, FeedbackEntity> feedbackMap = feedbackRepository.findAllByIdIn(feedbackIds)
+        Map<Long, String> feedbackMap = feedbackRepository.findAllByIdIn(feedbackIds)
             .stream()
-            .collect(Collectors.toMap(FeedbackEntity::getId, feedback -> feedback));
+            .collect(Collectors.toMap(FeedbackEntity::getId, FeedbackEntity::getContent));
 
         // feedbackMap에서 feedbackId와 매핑되는 feedbackContent들을 하나씩 AnnouncementResponse에 담음.
-        // getOrDefault: 혹시 모를 데이터불일치 상황에서 NPE 방지.
-        // 그래서 FeedbackEntity 기본생성자의 접근 level을 public으로 수정했어요.
         return announcements.stream()
             .map(announcement -> {
-                String feedbackContent = feedbackMap.getOrDefault(announcement.getFeedbackId(),
-                    new FeedbackEntity()).getContent();
-
-                return AnnouncementResponse.of(announcement, feedbackContent);
+                return AnnouncementResponse.of(announcement,
+                    feedbackMap.get(announcement.getFeedbackId()));
             })
             .collect(Collectors.toList());
     }
