@@ -8,7 +8,7 @@ import lombok.*;
 @Table(name = "feedback")
 @Getter
 @Access(AccessType.FIELD)
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FeedbackEntity {
 
     @Id
