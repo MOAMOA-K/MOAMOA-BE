@@ -11,6 +11,7 @@ import com.example.BE.menu.repository.MenuRepository;
 import com.example.BE.store.domain.StoreEntity;
 import com.example.BE.store.repository.StoreRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -79,7 +80,7 @@ public class MenuService {
 
     // 요청한 사용자가 메뉴를 생성/수정/삭제할 수 있는 권한을 가졌는지 확인
     private void validateStoreOwner(Long userId, StoreEntity store) {
-        if (!store.getUserId().equals(userId)) {
+        if (Objects.equals(store.getUserId(), userId)) {
             throw CustomException.from(MenuErrorCode.FORBIDDEN_MENU_ACCESS);
         }
     }

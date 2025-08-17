@@ -15,6 +15,7 @@ import com.example.BE.store.domain.StoreEntity;
 import com.example.BE.store.repository.StoreRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -116,14 +117,14 @@ public class AnnouncementService {
     // 수정/삭제하려는 개선사항의 가게 주인이 API 요청한 유저가 맞는지 확인하는 메서드
     private void validateStoreOwner(Long userId, Long storeId) {
         StoreEntity store = findStoreByIdOrThrow(storeId);
-        if (!store.getUserId().equals(userId)) {
+        if (Objects.equals(store.getUserId(), userId)) {
             throw CustomException.from(AnnouncementErrorCode.FORBIDDEN_ANNOUNCEMENT_ACCESS);
         }
     }
 
     // 참조할 feedback이 해당 가게에 속하는 feedback인지 검증하는 메서드
     private void validateFeedbackBelongsToStore(FeedbackEntity feedback, Long storeId){
-        if(!storeId.equals(feedback.getStoreId())){
+        if(Objects.equals(storeId, feedback.getStoreId())){
             throw CustomException.from(FeedbackErrorCode.FORBIDDEN_FEEDBACK_ACCESS);
         }
     }

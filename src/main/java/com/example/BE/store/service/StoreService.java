@@ -14,6 +14,7 @@ import com.example.BE.store.domain.dto.StoreResponse;
 import com.example.BE.store.domain.dto.StoreUpdateRequest;
 import com.example.BE.store.repository.StoreRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +80,7 @@ public class StoreService {
     }
 
     private void validateStoreOwner(StoreEntity store, Long userId) {
-        if (!store.getUserId().equals(userId)) {
+        if(!Objects.equals(store.getUserId(), userId)){
             throw CustomException.from(StoreErrorCode.FORBIDDEN_STORE_ACCESS);
         }
     }
