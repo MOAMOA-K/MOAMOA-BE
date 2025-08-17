@@ -8,6 +8,7 @@ import com.example.BE.global.jwt.JwtUtil;
 import com.example.BE.global.jwt.TokenResponse;
 import com.example.BE.user.domain.UserEntity;
 import com.example.BE.user.domain.UserEntity.UserRole;
+import com.example.BE.user.domain.dto.UserDetailResponse;
 import com.example.BE.user.domain.dto.UserResponse;
 import com.example.BE.user.domain.dto.UserUpdateRequest;
 import com.example.BE.user.repository.UserRepository;
@@ -52,13 +53,13 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public UserResponse signUpUser(SignupRequest signupRequest){
-        if(userRepository.existsByEmail(signupRequest.email())){
+    public UserResponse signUpUser(SignupRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.email())) {
             throw CustomException.from(UserErrorCode.DUPLICATE_EMAIL);
         }
 
         // userRole을 어드민으로 요청하면 바로 예외 발생
-        if(signupRequest.role()== UserRole.ROLE_ADMIN){
+        if (signupRequest.role() == UserRole.ROLE_ADMIN) {
             throw CustomException.from(UserErrorCode.NOT_ALLOWED_ADMIN);
         }
 
@@ -68,30 +69,35 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public TokenResponse login(LoginRequest loginRequest){
+    public TokenResponse login(LoginRequest loginRequest) {
         UserEntity user = userRepository.findByEmail(loginRequest.email())
-            .orElseThrow(()->CustomException.from(UserErrorCode.NOT_FOUND));
+                .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
 
         // 비밀번호 일치하지 않음
-        if(!passwordEncoder.matches(loginRequest.password(), user.getPassword())){
+        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw CustomException.from(UserErrorCode.INVALID_EMAIL_PASSWORD);
         }
 
         return TokenResponse.from(jwtUtil.generateToken(
-            user.getId(),
-            user.getEmail(),
-            user.getRole()
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
         ));
     }
 
     // 로그아웃
-    public void logout(Long userId){
+    public void logout(Long userId) {
         String email = findByIdOrThrow(userId).getEmail();
         log.info("logout reqeust by : {}", email);
     }
 
-    private UserEntity findByIdOrThrow(Long userId){
+    public UserDetailResponse getMyUser(Long userId) {
+        UserDetailResponse response = userRepository.findMyInfo(userId);
+        return response;
+    }
+
+    private UserEntity findByIdOrThrow(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(()->CustomException.from(UserErrorCode.NOT_FOUND));
+                .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
     }
 }
