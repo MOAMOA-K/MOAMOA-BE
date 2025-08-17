@@ -29,18 +29,7 @@ public class StoreService {
 
     @Transactional
     public StoreResponse createStore(StoreCreateRequest request, Long userId) {
-        StoreEntity newStore = StoreEntity.builder()
-            .userId(userId)
-            .name(request.name())
-            .canonicalName(request.name().replaceAll("\\s+", ""))
-            .address(request.address())
-            .latitude(request.latitude())
-            .longitude(request.longitude())
-            .description(request.description())
-            .category(request.category())
-            .imageUrl(request.imageUrl())
-            .openingTime(request.openingTime())
-            .build();
+        StoreEntity newStore = StoreEntity.of(userId, request);
         return StoreResponse.from(storeRepository.save(newStore));
     }
 

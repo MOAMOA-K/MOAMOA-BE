@@ -1,5 +1,6 @@
 package com.example.BE.store.domain;
 
+import com.example.BE.store.domain.dto.StoreCreateRequest;
 import com.example.BE.store.domain.dto.StoreUpdateRequest;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
@@ -19,11 +20,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "store")
-@Builder
 @Getter
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StoreEntity {
 
     @Id
@@ -60,6 +59,37 @@ public class StoreEntity {
 
     @Column(name = "opening_time")
     private String openingTime;
+
+    @Builder
+    private StoreEntity(Long userId, String name, String canonicalName, String address,
+        Double latitude, Double longitude, String description, StoreCategory category,
+        String imageUrl, String openingTime) {
+            this.userId=userId;
+            this.name=name;
+            this.canonicalName=canonicalName;
+            this.address=address;
+            this.latitude=latitude;
+            this.longitude=longitude;
+            this.description=description;
+            this.category=category;
+            this.imageUrl=imageUrl;
+            this.openingTime=openingTime;
+    }
+
+    public static StoreEntity of(Long userId, StoreCreateRequest request) {
+        return new StoreEntity(
+            userId,
+            request.name(),
+            request.name().replaceAll("\\s+", ""),
+            request.address(),
+            request.latitude(),
+            request.longitude(),
+            request.description(),
+            request.category(),
+            request.imageUrl(),
+            request.openingTime()
+        );
+    }
 
     // 정보 수정 메서드
     public void update(StoreUpdateRequest request) {
