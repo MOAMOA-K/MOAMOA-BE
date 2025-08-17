@@ -74,4 +74,8 @@ public class FeedbackEntity {
         this.status = FeedbackStatus.UNREAD;
         this.type = type;
     }
+
+    public void updateModifiedContent(String revised) {
+        this.modifiedContent = revised;
+    }
 }
