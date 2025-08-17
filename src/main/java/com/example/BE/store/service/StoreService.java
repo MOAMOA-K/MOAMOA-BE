@@ -1,9 +1,11 @@
 package com.example.BE.store.service;
 
+import com.example.BE.announcement.domain.dto.AnnouncementResponse;
 import com.example.BE.announcement.repository.AnnouncementRepository;
+import com.example.BE.announcement.service.AnnouncementService;
 import com.example.BE.global.exception.CustomException;
-import com.example.BE.global.exception.errorCode.AnnouncementErrorCode;
 import com.example.BE.global.exception.errorCode.StoreErrorCode;
+import com.example.BE.menu.domain.dto.MenuResponse;
 import com.example.BE.menu.repository.MenuRepository;
 import com.example.BE.store.domain.StoreEntity;
 import com.example.BE.store.domain.dto.StoreCreateRequest;
@@ -27,6 +29,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
     private final AnnouncementRepository announcementRepository;
+    private final AnnouncementService announcementService;
 
     @Transactional
     public StoreResponse createStore(StoreCreateRequest request, Long userId) {
@@ -38,10 +41,14 @@ public class StoreService {
 
     public StoreDetailResponse getStoreDetail(Long storeId) {
         StoreEntity store = findByIdOrThrow(storeId);
-        // 메뉴, 개선사항 목록을 조회하고 조합: 아직 구현 전
-        // ...
-        // return new StoreDetailResponse();
-        return null;
+        StoreResponse storeResponse = StoreResponse.from(store);
+        List<MenuResponse> menuList = menuRepository.findByStoreId(storeId).stream()
+            .map(MenuResponse::from)
+            .toList();
+        List<AnnouncementResponse> announcementList = announcementService.getAnnouncementsByStoreId(
+            storeId);
+
+        return StoreDetailResponse.from(storeResponse, menuList, announcementList);
     }
 
     public List<StoreResponse> searchStores(double lat, double lon, String keyword) {
