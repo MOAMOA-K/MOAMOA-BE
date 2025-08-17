@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -21,7 +22,7 @@ public class FeedbackCreatedHandler {
 
     @Async("feedbackExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onFeedbackCreated(FeedbackCreatedEvent event) {
         feedbackRepository.findById(event.feedbackId()).ifPresent(feedback -> {
             if (feedback.getModifiedContent() != null && !feedback.getModifiedContent().isBlank()) {

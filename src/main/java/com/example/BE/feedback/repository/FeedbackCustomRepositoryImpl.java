@@ -1,6 +1,6 @@
 package com.example.BE.feedback.repository;
 
-import com.example.BE.feedback.controller.dto.FeedbackResponse;
+import com.example.BE.feedback.controller.dto.FeedbackOwnerResponse;
 import com.example.BE.feedback.controller.dto.FeedbackSearchRequest;
 import com.example.BE.feedback.domain.QFeedbackEntity;
 import com.querydsl.core.BooleanBuilder;
@@ -19,23 +19,20 @@ public class FeedbackCustomRepositoryImpl implements FeedbackCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<FeedbackResponse> search(FeedbackSearchRequest request) {
+    public Page<FeedbackOwnerResponse> search(FeedbackSearchRequest request) {
         QFeedbackEntity f = QFeedbackEntity.feedbackEntity;
 
         BooleanBuilder where = buildWhere(request, f);
 
-        List<FeedbackResponse> content = queryFactory
-                .select(Projections.constructor(FeedbackResponse.class,
+        List<FeedbackOwnerResponse> content = queryFactory
+                .select(Projections.constructor(FeedbackOwnerResponse.class,
                         f.id,
-                        f.userId,
-                        f.storeId,
-                        f.receiptId,
                         f.rating,
-                        f.content,
                         f.modifiedContent,
                         f.reply,
                         f.type,
-                        f.status
+                        f.status,
+                        f.createdAt
                 ))
                 .from(f)
                 .where(where)

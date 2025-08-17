@@ -8,6 +8,7 @@ import com.example.BE.feedback.service.FeedbackService;
 import com.example.BE.user.domain.dto.MessageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/feedbacks")
 @RequiredArgsConstructor
@@ -47,6 +49,8 @@ public class FeedbackApiController {
         return ResponseEntity.ok(response);
     }
 
+    //TODO: ADMIN 권한이 있는 사용자만 접근 가능하도록 수정 필요
+    // 현재는 모든 사용자에게 열려있음
     @GetMapping
     public ResponseEntity<?> search(
             @RequestParam(required = false) Long userId,
@@ -66,6 +70,15 @@ public class FeedbackApiController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> myFeedbacks(
+            @AuthenticationPrincipal Long userId
+    ) {
+        var response = feedbackService.getMyFeedbacks(userId);
+
+        return ResponseEntity.ok(response);
     }
 
 }

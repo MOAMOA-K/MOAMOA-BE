@@ -1,6 +1,8 @@
 package com.example.BE.feedback.service;
 
 import com.example.BE.feedback.controller.dto.FeedbackCreateRequest;
+import com.example.BE.feedback.controller.dto.FeedbackDetailResponse;
+import com.example.BE.feedback.controller.dto.FeedbackOwnerResponse;
 import com.example.BE.feedback.controller.dto.FeedbackResponse;
 import com.example.BE.feedback.controller.dto.FeedbackSearchRequest;
 import com.example.BE.feedback.domain.FeedbackEntity;
@@ -11,6 +13,7 @@ import com.example.BE.global.exception.errorCode.FeedbackErrorCode;
 import com.example.BE.global.tx.EventTxPublisher;
 import com.example.BE.receipt.domain.ReceiptEntity;
 import com.example.BE.receipt.service.ReceiptService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -45,8 +48,18 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Page<FeedbackResponse> searchFeedback(FeedbackSearchRequest request) {
+    public Page<FeedbackOwnerResponse> searchFeedback(FeedbackSearchRequest request) {
         return feedbackRepository.search(request);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<FeedbackDetailResponse> getMyFeedbacks(Long userId) {
+        List<FeedbackDetailResponse> feedbacks = feedbackRepository.findMyFeedbacks(userId);
+        if (feedbacks.isEmpty()) {
+            throw CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND);
+        }
+
+        return feedbacks;
     }
 
 
