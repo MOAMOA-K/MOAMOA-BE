@@ -1,7 +1,6 @@
 package com.example.BE.store.service;
 
 import com.example.BE.announcement.domain.dto.AnnouncementResponse;
-import com.example.BE.announcement.repository.AnnouncementRepository;
 import com.example.BE.announcement.service.AnnouncementService;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.StoreErrorCode;

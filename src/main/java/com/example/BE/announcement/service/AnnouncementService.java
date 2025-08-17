@@ -67,10 +67,8 @@ public class AnnouncementService {
 
         // feedbackMap에서 feedbackId와 매핑되는 feedbackContent들을 하나씩 AnnouncementResponse에 담음.
         return announcements.stream()
-            .map(announcement -> {
-                return AnnouncementResponse.of(announcement,
-                    feedbackMap.get(announcement.getFeedbackId()));
-            })
+            .map(announcement -> AnnouncementResponse.of(announcement,
+                feedbackMap.get(announcement.getFeedbackId())))
             .collect(Collectors.toList());
     }
 
