@@ -115,14 +115,14 @@ public class AnnouncementService {
     // 수정/삭제하려는 개선사항의 가게 주인이 API 요청한 유저가 맞는지 확인하는 메서드
     private void validateStoreOwner(Long userId, Long storeId) {
         StoreEntity store = findStoreByIdOrThrow(storeId);
-        if (Objects.equals(store.getUserId(), userId)) {
+        if (!Objects.equals(store.getUserId(), userId)) {
             throw CustomException.from(AnnouncementErrorCode.FORBIDDEN_ANNOUNCEMENT_ACCESS);
         }
     }
 
     // 참조할 feedback이 해당 가게에 속하는 feedback인지 검증하는 메서드
     private void validateFeedbackBelongsToStore(FeedbackEntity feedback, Long storeId){
-        if(Objects.equals(storeId, feedback.getStoreId())){
+        if(!Objects.equals(storeId, feedback.getStoreId())){
             throw CustomException.from(FeedbackErrorCode.FORBIDDEN_FEEDBACK_ACCESS);
         }
     }

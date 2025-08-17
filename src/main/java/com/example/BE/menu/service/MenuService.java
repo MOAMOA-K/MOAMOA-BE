@@ -80,7 +80,7 @@ public class MenuService {
 
     // 요청한 사용자가 메뉴를 생성/수정/삭제할 수 있는 권한을 가졌는지 확인
     private void validateStoreOwner(Long userId, StoreEntity store) {
-        if (Objects.equals(store.getUserId(), userId)) {
+        if (!Objects.equals(store.getUserId(), userId)) {
             throw CustomException.from(MenuErrorCode.FORBIDDEN_MENU_ACCESS);
         }
     }
