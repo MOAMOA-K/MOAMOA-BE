@@ -24,7 +24,7 @@ public record StoreCreateRequest(
     Double longitude,
     String description,
 
-    @NotBlank(message = "카테고리 정보는 필수입니다.")
+    @NotNull(message = "카테고리 정보는 필수입니다.")
     StoreCategory category,
     String imageUrl,
 
