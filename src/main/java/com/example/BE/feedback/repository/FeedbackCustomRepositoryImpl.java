@@ -36,6 +36,7 @@ public class FeedbackCustomRepositoryImpl implements FeedbackCustomRepository {
                 ))
                 .from(f)
                 .where(where)
+                .orderBy(f.createdAt.desc())
                 .offset(request.pageable().getOffset())
                 .limit(request.pageable().getPageSize())
                 .fetch();
