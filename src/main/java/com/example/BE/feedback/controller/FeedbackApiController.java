@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,4 +30,15 @@ public class FeedbackApiController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(MessageResponse.from("피드백이 등록되었습니다."));
     }
+
+    @GetMapping("/{feedbackId}")
+    public ResponseEntity<?> getFeedback(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody Long feedbackId) {
+        var response = feedbackService.getFeedback(feedbackId);
+
+        return ResponseEntity.ok(response);
+    }
+
+
 }
