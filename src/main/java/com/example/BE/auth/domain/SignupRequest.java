@@ -3,6 +3,7 @@ package com.example.BE.auth.domain;
 import com.example.BE.user.domain.UserEntity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record SignupRequest (
@@ -17,5 +18,6 @@ public record SignupRequest (
     @Size(min=1, max=16, message="비밀번호는 최대 16자리입니다.")
     String password,
 
+    @NotNull(message = "유저 타입은 필수 정보입니다.")
     UserRole role
 ){}
