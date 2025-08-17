@@ -1,21 +1,28 @@
 package com.example.BE.feedback.controller;
 
 import com.example.BE.feedback.controller.dto.FeedbackCreateRequest;
+import com.example.BE.feedback.controller.dto.FeedbackSearchRequest;
+import com.example.BE.feedback.domain.FeedbackStatus;
+import com.example.BE.feedback.domain.FeedbackType;
 import com.example.BE.feedback.service.FeedbackService;
 import com.example.BE.user.domain.dto.MessageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/feedback")
+@RequestMapping("/api/feedbacks")
 @RequiredArgsConstructor
 public class FeedbackApiController {
 
@@ -34,10 +41,31 @@ public class FeedbackApiController {
     @GetMapping("/{feedbackId}")
     public ResponseEntity<?> getFeedback(
             @AuthenticationPrincipal Long userId,
-            @Valid @RequestBody Long feedbackId) {
+            @PathVariable Long feedbackId) {
         var response = feedbackService.getFeedback(feedbackId);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> search(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Long storeId,
+            @RequestParam(required = false) FeedbackType type,
+            @RequestParam(required = false) FeedbackStatus status,
+            @PageableDefault(size = 10, page = 0) Pageable pageable
+    ) {
+        var response = feedbackService.searchFeedback(
+                FeedbackSearchRequest.of(
+                        userId,
+                        storeId,
+                        type,
+                        status,
+                        pageable
+                ));
+
+        return ResponseEntity.ok(response);
+
     }
 
 
