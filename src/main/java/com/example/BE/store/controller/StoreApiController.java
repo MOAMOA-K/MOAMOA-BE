@@ -33,7 +33,6 @@ public class StoreApiController {
     }
 
     // 가게 상세 정보 조회
-    // Menu, Announcement entity 추가한 뒤 구현 마무리할 예정
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreDetailResponse> getStoreDetail(
         @PathVariable Long storeId
