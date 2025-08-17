@@ -1,5 +1,6 @@
 package com.example.BE.feedback.domain;
 
+import com.example.BE.global.base.BaseTimeEntity;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Access(AccessType.FIELD)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FeedbackEntity {
+public class FeedbackEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,5 +78,10 @@ public class FeedbackEntity {
 
     public void updateModifiedContent(String revised) {
         this.modifiedContent = revised;
+    }
+
+    public void updateReply(String reply) {
+        this.reply = reply;
+        this.status = FeedbackStatus.DONE;
     }
 }
