@@ -26,7 +26,8 @@ public class AnnouncementApiController {
         @Valid @RequestBody AnnouncementCreateRequest request
     ) {
         AnnouncementResponse response = announcementService.createAnnouncement(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(response);
     }
 
     @GetMapping("/{announcementId}")
@@ -34,16 +35,18 @@ public class AnnouncementApiController {
         @PathVariable Long announcementId
     ) {
         AnnouncementResponse response = announcementService.getAnnouncementById(announcementId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(response);
     }
 
-//    @GetMapping("/list/{storeId}")
-//    public ResponseEntity<List<AnnouncementResponse>> getAnnouncementList(
-//        @PathVariable Long storeId
-//    ) {
-//        List<AnnouncementResponse> response = announcementService.getAnnouncementsByStoreId(storeId);
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping("/list/{storeId}")
+    public ResponseEntity<List<AnnouncementResponse>> getAnnouncementList(
+        @PathVariable Long storeId
+    ) {
+        List<AnnouncementResponse> response = announcementService.getAnnouncementsByStoreId(storeId);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(response);
+    }
 
     @PatchMapping("/{announcementId}")
     public ResponseEntity<AnnouncementResponse> updateAnnouncement(
@@ -52,7 +55,8 @@ public class AnnouncementApiController {
         @Valid @RequestBody AnnouncementUpdateRequest request
     ) {
         AnnouncementResponse response = announcementService.updateAnnouncement(userId, announcementId, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(response);
     }
 
     @DeleteMapping("/{announcementId}")

@@ -49,27 +49,32 @@ public class AnnouncementService {
         return AnnouncementResponse.of(announcement, feedback.getContent());
     }
 
-//    // 개선사항 리스트 조회
-//    public List<AnnouncementResponse> getAnnouncementsByStoreId(Long storeId) {
-//        List<AnnouncementEntity> announcements = announcementRepository.findByStoreId(storeId);
-//
-//        // N+1 문제를 방지하기 위해 feedbackId들을 모아 한 번에 조회
-//        List<Long> feedbackIds = announcements.stream()
-//            .map(AnnouncementEntity::getFeedbackId)
-//            .toList();
-//
-//        Map<Long, FeedbackEntity> feedbackMap = feedbackRepository.findAllByIdIn(feedbackIds)
-//            .stream()
-//            .collect(Collectors.toMap(FeedbackEntity::getId, feedback -> feedback));
-//
-//        return announcements.stream()
-//            .map(announcement -> {
-//                String feedbackContent = feedbackMap.getOrDefault(announcement.getFeedbackId(),
-//                    new FeedbackEntity()).getContent();
-//                return AnnouncementResponse.of(announcement, feedbackContent);
-//            })
-//            .collect(Collectors.toList());
-//    }
+    // 개선사항 리스트 조회
+    public List<AnnouncementResponse> getAnnouncementsByStoreId(Long storeId) {
+        List<AnnouncementEntity> announcements = announcementRepository.findByStoreId(storeId);
+
+        // 조회할 feedbackId 목록
+        List<Long> feedbackIds = announcements.stream()
+            .map(AnnouncementEntity::getFeedbackId)
+            .toList();
+
+        // 이후 feedbackId에 따라 빠른 조회를 위해 Map<>으로 변환
+        Map<Long, FeedbackEntity> feedbackMap = feedbackRepository.findAllByIdIn(feedbackIds)
+            .stream()
+            .collect(Collectors.toMap(FeedbackEntity::getId, feedback -> feedback));
+
+        // feedbackMap에서 feedbackId와 매핑되는 feedbackContent들을 하나씩 AnnouncementResponse에 담음.
+        // getOrDefault: 혹시 모를 데이터불일치 상황에서 NPE 방지.
+        // 그래서 FeedbackEntity 기본생성자의 접근 level을 public으로 수정했어요.
+        return announcements.stream()
+            .map(announcement -> {
+                String feedbackContent = feedbackMap.getOrDefault(announcement.getFeedbackId(),
+                    new FeedbackEntity()).getContent();
+
+                return AnnouncementResponse.of(announcement, feedbackContent);
+            })
+            .collect(Collectors.toList());
+    }
 
     // 개선사항 수정
     @Transactional
