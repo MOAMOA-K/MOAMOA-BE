@@ -28,13 +28,11 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
-    private final AnnouncementRepository announcementRepository;
     private final AnnouncementService announcementService;
 
     @Transactional
     public StoreResponse createStore(StoreCreateRequest request, Long userId) {
         StoreEntity newStore = StoreEntity.of(userId, request);
-        validateStoreOwner(newStore, userId);
 
         return StoreResponse.from(storeRepository.save(newStore));
     }
