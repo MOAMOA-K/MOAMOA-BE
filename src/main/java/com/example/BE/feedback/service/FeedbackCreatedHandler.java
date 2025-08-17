@@ -3,11 +3,11 @@ package com.example.BE.feedback.service;
 import com.example.BE.feedback.domain.event.FeedbackCreatedEvent;
 import com.example.BE.feedback.repository.FeedbackRepository;
 import com.example.BE.infra.openai.AiRewritePort;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -32,7 +32,7 @@ public class FeedbackCreatedHandler {
                 String revised = aiRewritePort.rewrite(feedback.getContent());
                 feedback.updateModifiedContent(revised);
             } catch (Exception e) {
-                log.info("AI 정제 실패 id={}", feedback.getId(), e);
+                log.error("AI 정제 실패 id={}", feedback.getId(), e);
 
             }
         });
