@@ -33,7 +33,7 @@ public class StoreEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "name", length = 20, nullable = false)
+    @Column(name = "name", length = 20, nullable = false, unique = true)
     private String name;
 
     @Column(name = "canonical_name", length = 20)
