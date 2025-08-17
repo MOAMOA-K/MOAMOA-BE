@@ -80,7 +80,7 @@ public class FeedbackEntity extends BaseTimeEntity {
         this.modifiedContent = revised;
     }
 
-    public void updateReply(String reply) {
+    public void reply(String reply) {
         this.reply = reply;
         this.status = FeedbackStatus.DONE;
     }

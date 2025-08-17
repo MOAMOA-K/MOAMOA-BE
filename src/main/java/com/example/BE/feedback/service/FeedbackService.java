@@ -62,5 +62,16 @@ public class FeedbackService {
         return feedbacks;
     }
 
+    @Transactional
+    public void replyFeedback(Long feedbackId, String replyContent, Long userId) {
+        FeedbackEntity feedback = feedbackRepository.findOwnedFeedback(feedbackId, userId)
+                .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
 
+        if (feedback.getReply() != null) {
+            throw CustomException.from(FeedbackErrorCode.FEEDBACK_ALREADY_REPLIED);
+        }
+
+        feedback.reply(replyContent);
+        feedbackRepository.save(feedback);
+    }
 }

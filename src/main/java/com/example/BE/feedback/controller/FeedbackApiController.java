@@ -81,4 +81,15 @@ public class FeedbackApiController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("{feedbackId}/reply")
+    public ResponseEntity<?> replyFeedback(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long feedbackId,
+            @RequestBody String replyContent
+    ) {
+        feedbackService.replyFeedback(feedbackId, replyContent, userId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(MessageResponse.from("피드백에 대한 답변이 등록되었습니다."));
+    }
+
 }
