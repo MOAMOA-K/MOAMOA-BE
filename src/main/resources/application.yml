@@ -23,15 +23,7 @@ spring:
   jwt:
     secret: ${SECRET_KEY}
     # 토큰 유효기간: 1시간
-    expiryTime: 3600000 
-
-# 요청 응답에 모두 한글 인코딩 강제 적용
-server:
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
+    expiryTime: 3600000
 
   ai:
     openai:
@@ -42,6 +34,18 @@ server:
           model: ${OPENAI_MODEL}
           temperature: ${OPENAI_TEMPERATURE}
           max-tokens: ${OPENAI_MAX_TOKENS}
+        embedding:
+          api-key: ${OPENAI_API_KEY}
 
         completions-path: "/chat/completions"
+
+
+# 요청 응답에 모두 한글 인코딩 강제 적용
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 

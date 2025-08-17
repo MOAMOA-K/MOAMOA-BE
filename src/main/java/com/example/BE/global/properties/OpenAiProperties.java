@@ -6,14 +6,16 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "ai.openai")
+@ConfigurationProperties(prefix = "spring.ai.openai")
 public class OpenAiProperties {
+
     private String apiKey;
 
     private Chat chat = new Chat();
 
     @Data
     public static class Chat {
+
         private String baseUrl;
         private Options options = new Options();
         private String completionsPath;
@@ -21,6 +23,7 @@ public class OpenAiProperties {
 
     @Data
     public static class Options {
+
         private String model;
         private Double temperature;
         private Integer maxTokens;
