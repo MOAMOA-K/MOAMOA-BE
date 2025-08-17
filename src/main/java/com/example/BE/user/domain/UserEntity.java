@@ -1,6 +1,8 @@
 package com.example.BE.user.domain;
 
 import com.example.BE.auth.domain.SignupRequest;
+import com.example.BE.global.exception.CustomException;
+import com.example.BE.global.exception.errorCode.UserErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
@@ -55,12 +57,24 @@ public class UserEntity {
 
     public static UserEntity from(SignupRequest signupRequest, PasswordEncoder passwordEncoder) {
         return new UserEntity(
-            signupRequest.email(),
-            passwordEncoder.encode(signupRequest.password()),
-            signupRequest.nickname(),
-            signupRequest.role(),
-            0L
+                signupRequest.email(),
+                passwordEncoder.encode(signupRequest.password()),
+                signupRequest.nickname(),
+                signupRequest.role(),
+                0L
         );
+    }
+
+    public void addPoints(Long p) {
+        points += p;
+    }
+
+    public void deletePoints(Long points) {
+        if (this.points >= points) {
+            this.points -= points;
+        } else {
+            throw CustomException.from(UserErrorCode.POINT_NOT_ENOUGH);
+        }
     }
 
     // 현재는 nickname만 수정이 가능합니다.
