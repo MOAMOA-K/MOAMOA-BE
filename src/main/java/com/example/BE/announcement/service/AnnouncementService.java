@@ -35,6 +35,7 @@ public class AnnouncementService {
         validateStoreOwner(userId, request.storeId());
 
         FeedbackEntity feedback = findFeedbackByIdOrThrow(request.feedbackId());
+        validateFeedbackBelongsToStore(feedback, request.storeId());
 
         AnnouncementEntity newAnnouncement = AnnouncementEntity.from(request);
         announcementRepository.save(newAnnouncement);
@@ -80,6 +81,7 @@ public class AnnouncementService {
 
         AnnouncementEntity announcement = findByIdOrThrow(announcementId);
         validateStoreOwner(userId, announcement.getStoreId());
+        validateFeedbackBelongsToStore(feedback, announcement.getStoreId());
 
         announcement.update(request.feedbackId(), request.description());
         return AnnouncementResponse.of(announcement, feedback.getContent());
@@ -116,6 +118,13 @@ public class AnnouncementService {
         StoreEntity store = findStoreByIdOrThrow(storeId);
         if (!store.getUserId().equals(userId)) {
             throw CustomException.from(AnnouncementErrorCode.FORBIDDEN_ANNOUNCEMENT_ACCESS);
+        }
+    }
+
+    // 참조할 feedback이 해당 가게에 속하는 feedback인지 검증하는 메서드
+    private void validateFeedbackBelongsToStore(FeedbackEntity feedback, Long storeId){
+        if(!storeId.equals(feedback.getStoreId())){
+            throw CustomException.from(FeedbackErrorCode.FORBIDDEN_FEEDBACK_ACCESS);
         }
     }
 }
