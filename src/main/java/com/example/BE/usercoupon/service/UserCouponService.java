@@ -49,8 +49,9 @@ public class UserCouponService {
 
 
     @Transactional
-    public void delete(Long userCouponId) {
+    public void delete(Long userCouponId, Long userId) {
         UserCouponEntity userCoupon = findById(userCouponId);
+        validateUserCoupon(userCoupon, userId);
         userCouponRepository.deleteById(userCouponId);
     }
 
@@ -69,15 +70,19 @@ public class UserCouponService {
     }
 
     private void validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
-        if (!userCoupon.getUserId().equals(userId)) {
-            throw CustomException.from(CouponErrorCode.INVALID_USER);
-        }
+        validateUserCoupon(userCoupon, userId);
 
         CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
                 .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
 
         if (!coupon.isValidPassword(password)) {
             throw CustomException.from(CouponErrorCode.INVALID_PASSWORD);
+        }
+    }
+
+    private void validateUserCoupon(UserCouponEntity userCoupon, Long userId) {
+        if (!userCoupon.getUserId().equals(userId)) {
+            throw CustomException.from(CouponErrorCode.INVALID_USER);
         }
     }
 }

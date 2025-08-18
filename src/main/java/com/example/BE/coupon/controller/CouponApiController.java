@@ -33,7 +33,7 @@ public class CouponApiController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("쿠폰이 생성되었습니다.");
     }
-    
+
     @GetMapping
     public ResponseEntity<?> getCoupons(
     ) {
@@ -48,15 +48,15 @@ public class CouponApiController {
             @AuthenticationPrincipal Long userId,
             @PathVariable Long storeId
     ) {
-        couponService.getCouponsByStore(storeId);
+        List<CouponResponse> couponsByStore = couponService.getCouponsByStore(storeId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(couponService.getCouponsByStore(storeId));
+                .body(couponsByStore);
     }
 
-    @DeleteMapping
+    @DeleteMapping("{couponId}")
     public ResponseEntity<?> delete(
             @AuthenticationPrincipal Long userId,
-            @RequestBody Long couponId
+            @PathVariable Long couponId
     ) {
         couponService.delete(couponId);
         return ResponseEntity.status(HttpStatus.OK)
