@@ -42,3 +42,9 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+# test 빌드 시에 자꾸 local.env 참조가 안 돼서... 어차피 값 주입만 해 주면 되는 거라 쓰레기값 넣어놓을게요
+naver:
+  ocr:
+    api-url: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    secret-key: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
