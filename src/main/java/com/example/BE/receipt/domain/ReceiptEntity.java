@@ -1,5 +1,6 @@
 package com.example.BE.receipt.domain;
 
+import com.example.BE.receipt.service.OcrService.OcrResult;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +58,37 @@ public class ReceiptEntity {
         this.status = status;
         this.totalPrice = totalPrice;
     }
+
+    // ofWithOcr
+    public static ReceiptEntity ofWithOcr(Long userId, Long storeId, OcrResult ocrResult){
+        String totalPriceString = ocrResult.totalPrice().replaceAll("[^0-9]", "");
+        Long totalPrice = Long.parseLong(totalPriceString);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(ocrResult.dateTime(), dateTimeFormatter);
+
+        return new ReceiptEntity(
+            userId,
+            storeId,
+            ocrResult.storeName(),
+            localDateTime,
+            ReceiptStatus.AVAILABLE,
+            totalPrice
+        );
+    }
+
+    // asDone
+    public void asDone(){
+        this.status = ReceiptStatus.DONE;
+    }
+
+    // update
+    public void update(Long storeId, String storeName, Long totalPrice){
+        this.storeId=storeId;
+        this.storeName=storeName;
+        this.totalPrice=totalPrice;
+    }
+
 
     public enum ReceiptStatus{
         AVAILABLE,
