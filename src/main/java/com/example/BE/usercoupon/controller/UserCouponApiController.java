@@ -34,7 +34,7 @@ public class UserCouponApiController {
     public ResponseEntity<?> use(
             @AuthenticationPrincipal Long userId,
             @RequestBody UserCouponUseRequest request) {
-        userCouponService.use(request);
+        userCouponService.use(request, userId);
         return ResponseEntity.status(200)
                 .body("쿠폰이 사용되었습니다.");
     }

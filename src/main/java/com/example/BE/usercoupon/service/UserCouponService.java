@@ -35,9 +35,10 @@ public class UserCouponService {
     }
 
     @Transactional
-    public void use(UserCouponUseRequest request) {
+    public void use(UserCouponUseRequest request, Long userId) {
         UserCouponEntity userCoupon = findById(request.userCouponId());
-        validateCouponPassword(userCoupon, request.password());
+
+        validateCoupon(userCoupon, request.password(), userId);
         markAsUsed(userCoupon);
     }
 
@@ -67,7 +68,11 @@ public class UserCouponService {
                 .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
     }
 
-    private void validateCouponPassword(UserCouponEntity userCoupon, String password) {
+    private void validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
+        if (!userCoupon.getUserId().equals(userId)) {
+            throw CustomException.from(CouponErrorCode.INVALID_USER);
+        }
+
         CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
                 .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
 

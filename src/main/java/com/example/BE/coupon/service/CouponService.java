@@ -44,6 +44,7 @@ public class CouponService {
 
     @Transactional
     public void delete(Long couponId) {
+        //TODO: 사장님 & 관리자 권한 체크
         if (!couponRepository.existsById(couponId)) {
             throw CustomException.from(CouponErrorCode.NOT_FOUND);
         }
