@@ -21,9 +21,10 @@ public record CouponCreateRequest(
         LocalDate validUntil
 ) {
 
-    public CouponEntity toEntity() {
+    public CouponEntity toEntity(String storeName) {
         return CouponEntity.builder()
                 .storeId(storeId)
+                .storeName(storeName)
                 .name(name)
                 .description(description)
                 .pointCost(pointCost)
