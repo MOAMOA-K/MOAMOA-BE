@@ -40,4 +40,8 @@ public class UserCouponEntity extends BaseTimeEntity {
         this.couponId = couponId;
         this.isUsed = isUsed;
     }
+
+    public void markAsUsed() {
+        this.isUsed = true;
+    }
 }

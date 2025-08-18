@@ -5,10 +5,13 @@ import com.example.BE.coupon.repository.CouponRepository;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.CouponErrorCode;
 import com.example.BE.usercoupon.controller.dto.UserCouponCreateRequest;
+import com.example.BE.usercoupon.controller.dto.UserCouponResponse;
 import com.example.BE.usercoupon.domain.UserCouponEntity;
 import com.example.BE.usercoupon.repository.UserCouponRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -28,6 +31,17 @@ public class UserCouponService {
         }
 
         userCouponRepository.save(request.toEntity(userId));
+    }
+
+    @Transactional
+    public void use(Long userCouponId) {
+        UserCouponEntity userCoupon = findById(userCouponId);
+        markAsUsed(userCoupon);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<UserCouponResponse> getUserCoupons(Long userId) {
+        return userCouponRepository.getUserCoupons(userId);
     }
 
 
