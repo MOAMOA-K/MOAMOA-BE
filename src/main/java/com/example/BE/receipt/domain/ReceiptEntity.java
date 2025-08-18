@@ -56,4 +56,9 @@ public class ReceiptEntity {
         this.status = status;
         this.totalPrice = totalPrice;
     }
+
+    public enum ReceiptStatus{
+        AVAILABLE,
+        DONE
+    }
 }
