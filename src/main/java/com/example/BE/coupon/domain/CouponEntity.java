@@ -70,4 +70,8 @@ public class CouponEntity extends BaseTimeEntity {
     public boolean isExpired() {
         return validUntil.isBefore(LocalDate.now());
     }
+
+    public boolean isValidPassword(String password) {
+        return this.password.equals(password);
+    }
 }

@@ -6,6 +6,7 @@ import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.CouponErrorCode;
 import com.example.BE.usercoupon.controller.dto.UserCouponCreateRequest;
 import com.example.BE.usercoupon.controller.dto.UserCouponResponse;
+import com.example.BE.usercoupon.controller.dto.UserCouponUseRequest;
 import com.example.BE.usercoupon.domain.UserCouponEntity;
 import com.example.BE.usercoupon.repository.UserCouponRepository;
 import java.util.List;
@@ -34,8 +35,9 @@ public class UserCouponService {
     }
 
     @Transactional
-    public void use(Long userCouponId) {
-        UserCouponEntity userCoupon = findById(userCouponId);
+    public void use(UserCouponUseRequest request) {
+        UserCouponEntity userCoupon = findById(request.userCouponId());
+        validateCouponPassword(userCoupon, request.password());
         markAsUsed(userCoupon);
     }
 
@@ -63,5 +65,14 @@ public class UserCouponService {
     private UserCouponEntity findById(Long userCouponId) {
         return userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
+    }
+
+    private void validateCouponPassword(UserCouponEntity userCoupon, String password) {
+        CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
+                .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
+
+        if (!coupon.isValidPassword(password)) {
+            throw CustomException.from(CouponErrorCode.INVALID_PASSWORD);
+        }
     }
 }

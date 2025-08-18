@@ -1,6 +1,7 @@
 package com.example.BE.usercoupon.controller;
 
 import com.example.BE.usercoupon.controller.dto.UserCouponCreateRequest;
+import com.example.BE.usercoupon.controller.dto.UserCouponUseRequest;
 import com.example.BE.usercoupon.service.UserCouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,8 @@ public class UserCouponApiController {
     @PostMapping("/use")
     public ResponseEntity<?> use(
             @AuthenticationPrincipal Long userId,
-            @RequestBody Long userCouponId) {
-        userCouponService.use(userCouponId);
+            @RequestBody UserCouponUseRequest request) {
+        userCouponService.use(request);
         return ResponseEntity.status(200)
                 .body("쿠폰이 사용되었습니다.");
     }
