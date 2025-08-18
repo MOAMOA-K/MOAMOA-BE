@@ -34,14 +34,23 @@ public class CouponEntity {
     @Column(name = "description", length = 255)
     private String description;
 
+    @Column(name = "point_cost", nullable = false)
+    private Long pointCost;
+
     @Column(name = "valid_until")
     private LocalDate validUntil;
 
     @Builder
-    public CouponEntity(Long storeId, String name, String description, LocalDate validUntil) {
+    public CouponEntity(
+            Long storeId,
+            String name,
+            String description,
+            Long pointCost,
+            LocalDate validUntil) {
         this.storeId = storeId;
         this.name = name;
         this.description = description;
+        this.pointCost = pointCost;
         this.validUntil = validUntil;
     }
 }
