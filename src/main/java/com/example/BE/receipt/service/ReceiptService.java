@@ -34,7 +34,9 @@ public class ReceiptService {
         try {
             OcrResult ocrResult = ocrService.scanReceipt(imageFile);
             Long storeId = storeRepository.findByCanonicalNameContaining(
-                ocrResult.storeName().replaceAll("\\s+", "")).getId();
+                    ocrResult.storeName().replaceAll("\\s+", ""))
+                .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
+                .getId();
 
             ReceiptEntity newReceipt = ReceiptEntity.ofWithOcr(userId, storeId, ocrResult);
             return ReceiptResponse.from(receiptRepository.save(newReceipt));
