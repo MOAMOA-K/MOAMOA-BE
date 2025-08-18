@@ -2,6 +2,7 @@ package com.example.BE.receipt.service;
 
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.ReceiptErrorCode;
+import com.example.BE.global.exception.errorCode.StoreErrorCode;
 import com.example.BE.receipt.domain.ReceiptEntity;
 import com.example.BE.receipt.domain.ReceiptEntity.ReceiptStatus;
 import com.example.BE.receipt.domain.dto.ReceiptResponse;
@@ -58,7 +59,9 @@ public class ReceiptService {
         validateReceiptOwner(userId, receipt);
 
         Long storeId = storeRepository.findByCanonicalNameContaining(
-            request.storeName().replaceAll("\\s+", "")).getId();
+                request.storeName().replaceAll("\\s+", ""))
+            .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
+            .getId();
 
         receipt.update(storeId, request.storeName(), Long.parseLong(request.totalPrice()));
         return ReceiptResponse.from(receipt);
