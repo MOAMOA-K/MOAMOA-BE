@@ -8,9 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
-    // 키워드 검색 (가게 이름 or 공백 없는 이름으로 검색)
-    List<StoreEntity> findByNameContainingOrCanonicalNameContaining(String name,
-        String canonicalName);
+    // 키워드 검색 (공백 없는 이름으로 검색)
+    StoreEntity findByCanonicalNameContaining(String canonicalName);
 
     // 이거는 근데 AI 도움을 받은 거라 테스트 좀 해 봐야 해요.
     // 지도 검색을 위한 공간 쿼리 (MySQL 기준)
