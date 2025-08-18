@@ -2,9 +2,11 @@ package com.example.BE.receipt.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -17,9 +19,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class OcrService {
@@ -29,8 +28,6 @@ public class OcrService {
     private String apiUrl;
     @Value("${naver.ocr.secret-key}")
     private String secretKey;
-
-    public record OcrResult(String storeName, String address, String dateTime, String totalPrice) {}
 
     public OcrResult scanReceipt(MultipartFile imageFile) throws IOException {
 
@@ -102,15 +99,22 @@ public class OcrService {
 
             // 섹션의 끝을 감지
             if (text.contains("[사업자번호]")) {
-                if (currentSection.equals("STORE_NAME")) currentSection = "";
+                if (currentSection.equals("STORE_NAME")) {
+                    currentSection = "";
+                }
             } else if (text.contains("[대표자]")) {
-                if (currentSection.equals("ADDRESS")) currentSection = "";
+                if (currentSection.equals("ADDRESS")) {
+                    currentSection = "";
+                }
             } else if (text.contains("상품명")) { // '상품명' 이 포함된 라인을 만나면 날짜 섹션 종료
-                if (currentSection.equals("DATETIME")) currentSection = "";
+                if (currentSection.equals("DATETIME")) {
+                    currentSection = "";
+                }
             } else if (text.contains("신용승인정보")) { // '신용승인정보' 가 포함된 라인을 만나면 합계금액 섹션 종료
-                if (currentSection.equals("TOTAL_PRICE")) currentSection = "";
+                if (currentSection.equals("TOTAL_PRICE")) {
+                    currentSection = "";
+                }
             }
-
 
             switch (currentSection) {
                 case "STORE_NAME" -> storeNameBuilder.append(text).append(" ");
@@ -126,4 +130,8 @@ public class OcrService {
             dateTimeBuilder.toString().trim(),
             totalPriceBuilder.toString().trim()
         );
-    }}
+    }
+
+    public record OcrResult(String storeName, String address, String dateTime, String totalPrice) {
+    }
+}
