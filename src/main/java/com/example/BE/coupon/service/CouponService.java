@@ -5,6 +5,7 @@ import com.example.BE.coupon.controller.dto.CouponResponse;
 import com.example.BE.coupon.repository.CouponRepository;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.CouponErrorCode;
+import com.example.BE.usercoupon.repository.UserCouponRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final UserCouponRepository userCouponRepository;
 
     @Transactional
     public void create(CouponCreateRequest request) {
@@ -38,7 +40,8 @@ public class CouponService {
         if (!couponRepository.existsById(couponId)) {
             throw CustomException.from(CouponErrorCode.NOT_FOUND);
         }
-        // TODO: userCoupon 먼저 지우기
+        
+        userCouponRepository.deleteAllByCouponId(couponId);
         couponRepository.deleteById(couponId);
     }
 
