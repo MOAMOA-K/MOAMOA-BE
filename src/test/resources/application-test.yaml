@@ -1,0 +1,44 @@
+spring:
+  flyway:
+    enabled: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  jwt:
+    secret: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    # 토큰 유효기간: 1시간
+    expiryTime: 3600000
+  ai:
+    openai:
+      api-key: test-key
+      chat:
+        base-url: https://test.com
+        options:
+          model: test-model
+          temperature: 0.0
+          max-tokens: 1024
+        embedding:
+          api-key: test-key
+        completions-path: "/chat/completions"
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
