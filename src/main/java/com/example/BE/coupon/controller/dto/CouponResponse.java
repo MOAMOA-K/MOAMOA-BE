@@ -11,7 +11,7 @@ public record CouponResponse(
         String validUntil
 ) {
 
-    public static CouponResponse from(List<CouponEntity> entity) {
+    public static List<CouponResponse> from(List<CouponEntity> entity) {
         return entity.stream()
                 .map(coupon -> new CouponResponse(
                         coupon.getId(),
@@ -20,7 +20,6 @@ public record CouponResponse(
                         coupon.getPointCost(),
                         coupon.getValidUntil() != null ? coupon.getValidUntil().toString() : null
                 ))
-                .findFirst()
-                .orElse(null);
+                .toList();
     }
 }

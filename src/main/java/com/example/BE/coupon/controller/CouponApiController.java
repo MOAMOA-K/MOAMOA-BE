@@ -1,7 +1,9 @@
 package com.example.BE.coupon.controller;
 
 import com.example.BE.coupon.controller.dto.CouponCreateRequest;
+import com.example.BE.coupon.controller.dto.CouponResponse;
 import com.example.BE.coupon.service.CouponService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/coupon")
+@RequestMapping("/api/coupons")
 @RequiredArgsConstructor
 public class CouponApiController {
 
@@ -31,7 +33,16 @@ public class CouponApiController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("쿠폰이 생성되었습니다.");
     }
+    
+    @GetMapping
+    public ResponseEntity<?> getCoupons(
+    ) {
+        List<CouponResponse> response = couponService.getCoupons();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
 
+    //TODO: 사장님
     @GetMapping("/store/{storeId}")
     public ResponseEntity<?> getCouponsByStore(
             @AuthenticationPrincipal Long userId,

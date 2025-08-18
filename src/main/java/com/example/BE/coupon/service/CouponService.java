@@ -5,6 +5,8 @@ import com.example.BE.coupon.controller.dto.CouponResponse;
 import com.example.BE.coupon.repository.CouponRepository;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.CouponErrorCode;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,7 +24,12 @@ public class CouponService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public CouponResponse getCouponsByStore(Long storeId) {
+    public List<CouponResponse> getCoupons() {
+        return CouponResponse.from(couponRepository.findCoupons(LocalDate.now()));
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<CouponResponse> getCouponsByStore(Long storeId) {
         return CouponResponse.from(couponRepository.findAllByStoreId(storeId));
     }
 
