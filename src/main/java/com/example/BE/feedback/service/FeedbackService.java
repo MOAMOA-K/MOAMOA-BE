@@ -32,7 +32,6 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final ReceiptService receiptService;
     private final EventTxPublisher eventPublisher;
-    private final UserService userService;
     private final UserRepository userRepository;
 
     @Transactional
@@ -52,7 +51,7 @@ public class FeedbackService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public FeedbackResponse getFeedback(Long feedbackId) {
         FeedbackEntity feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
+            .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
 
         return FeedbackResponse.from(feedback);
     }
@@ -75,7 +74,7 @@ public class FeedbackService {
     @Transactional
     public void replyFeedback(Long feedbackId, String replyContent, Long userId) {
         FeedbackEntity feedback = feedbackRepository.findOwnedFeedback(feedbackId, userId)
-                .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
+            .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
 
         if (feedback.getReply() != null) {
             throw CustomException.from(FeedbackErrorCode.FEEDBACK_ALREADY_REPLIED);
@@ -87,7 +86,7 @@ public class FeedbackService {
 
     private void addUserPoints(Long userId) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
+            .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
 
         user.addPoints(300L);
     }
