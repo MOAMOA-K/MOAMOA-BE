@@ -43,6 +43,8 @@ public class FeedbackService {
         feedbackRepository.save(feedback);
 
         addUserPoints(userId);
+        // 영수증 상태 완료 처리
+        receiptService.receiptAsDone(userId, request.receiptId());
 
         eventPublisher.publish(new FeedbackCreatedEvent(feedback.getId()));
     }
