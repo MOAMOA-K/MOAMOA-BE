@@ -1,0 +1,88 @@
+package com.example.BE.usercoupon.service;
+
+import com.example.BE.coupon.domain.CouponEntity;
+import com.example.BE.coupon.repository.CouponRepository;
+import com.example.BE.global.exception.CustomException;
+import com.example.BE.global.exception.errorCode.CouponErrorCode;
+import com.example.BE.usercoupon.controller.dto.UserCouponCreateRequest;
+import com.example.BE.usercoupon.controller.dto.UserCouponResponse;
+import com.example.BE.usercoupon.controller.dto.UserCouponUseRequest;
+import com.example.BE.usercoupon.domain.UserCouponEntity;
+import com.example.BE.usercoupon.repository.UserCouponRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class UserCouponService {
+
+    private final CouponRepository couponRepository;
+    private final UserCouponRepository userCouponRepository;
+
+    @Transactional
+    public void create(UserCouponCreateRequest request, Long userId) {
+        CouponEntity coupon = couponRepository.findById(request.couponId())
+                .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
+
+        if (coupon.isExpired()) {
+            throw CustomException.from(CouponErrorCode.EXPIRED);
+        }
+
+        userCouponRepository.save(request.toEntity(userId));
+    }
+
+    @Transactional
+    public void use(UserCouponUseRequest request, Long userId) {
+        UserCouponEntity userCoupon = findById(request.userCouponId());
+
+        validateCoupon(userCoupon, request.password(), userId);
+        markAsUsed(userCoupon);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<UserCouponResponse> getUserCoupons(Long userId) {
+        return userCouponRepository.getUserCoupons(userId);
+    }
+
+
+    @Transactional
+    public void delete(Long userCouponId, Long userId) {
+        UserCouponEntity userCoupon = findById(userCouponId);
+        validateUserCoupon(userCoupon, userId);
+        userCouponRepository.deleteById(userCouponId);
+    }
+
+    private void markAsUsed(UserCouponEntity userCoupon) {
+        if (userCoupon.getIsUsed()) {
+            throw CustomException.from(CouponErrorCode.EXPIRED);
+        }
+
+        userCoupon.markAsUsed();
+        userCouponRepository.save(userCoupon);
+    }
+
+    private UserCouponEntity findById(Long userCouponId) {
+        return userCouponRepository.findById(userCouponId)
+                .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
+    }
+
+    private void validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
+        validateUserCoupon(userCoupon, userId);
+
+        CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
+                .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
+
+        if (!coupon.isValidPassword(password)) {
+            throw CustomException.from(CouponErrorCode.INVALID_PASSWORD);
+        }
+    }
+
+    private void validateUserCoupon(UserCouponEntity userCoupon, Long userId) {
+        if (!userCoupon.getUserId().equals(userId)) {
+            throw CustomException.from(CouponErrorCode.INVALID_USER);
+        }
+    }
+}
