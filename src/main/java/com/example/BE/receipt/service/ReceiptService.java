@@ -65,7 +65,7 @@ public class ReceiptService {
             .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
             .getId();
 
-        receipt.update(storeId, request.storeName(), Long.parseLong(request.totalPrice()));
+        receipt.update(storeId, request.storeName(), request.totalPrice());
         return ReceiptResponse.from(receipt);
     }
 
