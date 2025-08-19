@@ -2,12 +2,22 @@ package com.example.BE.receipt.service;
 
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.ReceiptErrorCode;
+import com.example.BE.global.exception.errorCode.StoreErrorCode;
 import com.example.BE.receipt.domain.ReceiptEntity;
-import com.example.BE.receipt.domain.ReceiptStatus;
+import com.example.BE.receipt.domain.ReceiptEntity.ReceiptStatus;
+import com.example.BE.receipt.domain.dto.ReceiptResponse;
+import com.example.BE.receipt.domain.dto.ReceiptUpdateRequest;
 import com.example.BE.receipt.repository.ReceiptRepository;
+import com.example.BE.receipt.service.OcrService.OcrResult;
+import com.example.BE.store.repository.StoreRepository;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -16,10 +26,83 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReceiptService {
 
     private final ReceiptRepository receiptRepository;
+    private final StoreRepository storeRepository;
+    private final OcrService ocrService;
+
+    @Transactional
+    public ReceiptResponse ocrAndCreateReceipt(Long userId, MultipartFile imageFile) {
+        try {
+            OcrResult ocrResult = ocrService.scanReceipt(imageFile);
+            Long storeId = storeRepository.findByCanonicalNameContaining(
+                    ocrResult.storeName().replaceAll("\\s+", ""))
+                .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
+                .getId();
+
+            ReceiptEntity newReceipt = ReceiptEntity.ofWithOcr(userId, storeId, ocrResult);
+            return ReceiptResponse.from(receiptRepository.save(newReceipt));
+        } catch (IOException e) {
+            throw CustomException.from(ReceiptErrorCode.OCR_REQUEST_FAILED);
+        }
+    }
+
+    @Transactional
+    public ReceiptResponse receiptAsDone(Long userId, Long receiptId) {
+        ReceiptEntity receipt = findByIdOrThrow(receiptId);
+        validateReceiptOwner(userId, receipt);
+
+        receipt.asDone(); // 영수증 상태를 DONE으로 변경
+        return ReceiptResponse.from(receipt);
+    }
+
+    @Transactional
+    public ReceiptResponse updateReceipt(Long userId, Long receiptId,
+        ReceiptUpdateRequest request) {
+        ReceiptEntity receipt = findByIdOrThrow(receiptId);
+        validateReceiptOwner(userId, receipt);
+
+        Long storeId = storeRepository.findByCanonicalNameContaining(
+                request.storeName().replaceAll("\\s+", ""))
+            .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
+            .getId();
+
+        receipt.update(storeId, request.storeName(), request.totalPrice());
+        return ReceiptResponse.from(receipt);
+    }
+
+    public ReceiptResponse getReceiptById(Long userId, Long receiptId) {
+        ReceiptEntity receipt = findByIdOrThrow(receiptId);
+        validateReceiptOwner(userId, receipt); // 자신의 영수증만 조회 가능
+        return ReceiptResponse.from(receipt);
+    }
+
+    public List<ReceiptResponse> getReceiptsByUser(Long userId) {
+        return receiptRepository.findByUserId(userId).stream()
+            .map(ReceiptResponse::from)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteReceipt(Long userId, Long receiptId) {
+        ReceiptEntity receipt = findByIdOrThrow(receiptId);
+        validateReceiptOwner(userId, receipt);
+
+        receiptRepository.deleteById(receiptId);
+    }
+
+    private ReceiptEntity findByIdOrThrow(Long receiptId) {
+        return receiptRepository.findById(receiptId)
+            .orElseThrow(() -> CustomException.from(ReceiptErrorCode.RECEIPT_NOT_FOUND));
+    }
+
+    private void validateReceiptOwner(Long userId, ReceiptEntity receipt) {
+        if (!Objects.equals(receipt.getUserId(), userId)) {
+            throw CustomException.from(ReceiptErrorCode.FORBIDDEN_RECEIPT_ACCESS);
+        }
+    }
 
     public ReceiptEntity validateReceipt(Long receiptId) {
         ReceiptEntity receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> CustomException.from(ReceiptErrorCode.RECEIPT_NOT_FOUND));
+            .orElseThrow(() -> CustomException.from(ReceiptErrorCode.RECEIPT_NOT_FOUND));
 
         if (receipt.getStatus() != ReceiptStatus.AVAILABLE) {
             throw CustomException.from(ReceiptErrorCode.RECEIPT_NOT_AUTHORIZED);
