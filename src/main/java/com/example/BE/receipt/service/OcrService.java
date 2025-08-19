@@ -1,5 +1,7 @@
 package com.example.BE.receipt.service;
 
+import com.example.BE.global.exception.CustomException;
+import com.example.BE.global.exception.errorCode.ReceiptErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,8 +64,14 @@ public class OcrService {
         };
         body.add("file", imageResource);
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        String response = restTemplate.postForObject(apiUrl, requestEntity, String.class);
+        String response;
+        try {
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body,
+                headers);
+            response = restTemplate.postForObject(apiUrl, requestEntity, String.class);
+        } catch(RestClientException e){
+            throw CustomException.from(ReceiptErrorCode.OCR_REQUEST_FAILED);
+        }
 
         // 응답 해석
         JsonNode root = objectMapper.readTree(response);
