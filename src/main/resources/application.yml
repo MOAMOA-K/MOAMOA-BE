@@ -1,0 +1,62 @@
+spring:
+  port: ${SPRING_PORT}
+  application:
+    name: BE
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 15
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        hibernate.highlight_sql: true
+        hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 100
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      org.hibernate.orm.jdbc.bind: trace
+      org.hibernate.type.descriptor.sql: trace
+
+  jwt:
+    secret: ${SECRET_KEY}
+    # 토큰 유효기간: 1시간
+    expiryTime: 3600000
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        base-url: ${OPENAI_BASE_URL}
+        options:
+          model: ${OPENAI_MODEL}
+          temperature: ${OPENAI_TEMPERATURE}
+          max-tokens: ${OPENAI_MAX_TOKENS}
+        embedding:
+          api-key: ${OPENAI_API_KEY}
+
+        completions-path: "/chat/completions"
+
+# 요청 응답에 모두 한글 인코딩 강제 적용
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+naver:
+  ocr:
+    api-url: ${NAVER_API_URL}
+    secret-key: ${NAVER_API_KEY}
+
