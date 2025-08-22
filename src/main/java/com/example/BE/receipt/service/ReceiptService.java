@@ -11,6 +11,8 @@ import com.example.BE.receipt.repository.ReceiptRepository;
 import com.example.BE.receipt.service.OcrService.OcrResult;
 import com.example.BE.store.repository.StoreRepository;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,6 +39,15 @@ public class ReceiptService {
                     ocrResult.storeName().replaceAll("\\s+", ""))
                 .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
                 .getId();
+
+            // 영수증 중복 등록 검증
+            // ocrResult.datetime, storeId로 비교
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss");
+            LocalDateTime localDateTime = LocalDateTime.parse(ocrResult.dateTime(), dateTimeFormatter);
+
+            if(receiptRepository.existsByIssuedAtAndStoreId(localDateTime, storeId)){
+                throw CustomException.from(ReceiptErrorCode.ALREADY_EXIST_RECEIPT);
+            }
 
             ReceiptEntity newReceipt = ReceiptEntity.ofWithOcr(userId, storeId, ocrResult);
             return ReceiptResponse.from(receiptRepository.save(newReceipt));
