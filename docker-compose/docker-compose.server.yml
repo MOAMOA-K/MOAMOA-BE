@@ -1,6 +1,6 @@
 services:
   app:
-    image:  hyun7586/moamoa-server:latest
+    image: hyun7586/moamoa-server:latest
     container_name: moa-server
     env_file:
       - ${ENV_FILE}
