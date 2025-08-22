@@ -40,4 +40,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: hyun7586/moamoa-server
+          tags: hyun7586/moamoa-server:latest
