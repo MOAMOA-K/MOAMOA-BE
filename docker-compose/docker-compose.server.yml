@@ -24,7 +24,7 @@ services:
       - ${DB_PORT}
     ports:
       - ${DB_PORT}:${DB_PORT}
-    restart: "no"
+    restart: "unless-stopped"
     volumes:
       - moa-database:/var/lib/mysql
     networks:
