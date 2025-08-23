@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,42 +24,42 @@ public class UserApiController {
 
     private final UserService userService;
 
-    @GetMapping("/{userId}")
+    @GetMapping("/")
     public ResponseEntity<UserResponse> getUser(
-            @PathVariable Long userId
+        @AuthenticationPrincipal Long userId
     ) {
         UserResponse userResponse = userService.findById(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userResponse);
+            .body(userResponse);
     }
 
     // 유저 프로필 수정
-    @PatchMapping("/{userId}")
+    @PatchMapping("/")
     public ResponseEntity<UserResponse> updateUser(
-            @PathVariable Long userId,
-            @Valid @RequestBody UserUpdateRequest request
+        @AuthenticationPrincipal Long userId,
+        @Valid @RequestBody UserUpdateRequest request
     ) {
         UserResponse userResponse = userService.updateProfile(userId, request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userResponse);
+            .body(userResponse);
     }
 
     // 유저 삭제
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/")
     public ResponseEntity<MessageResponse> deleteUser(
-            @PathVariable Long userId
+        @AuthenticationPrincipal Long userId
     ) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(MessageResponse.from("회원 탈퇴가 완료되었습니다."));
+            .body(MessageResponse.from("회원 탈퇴가 완료되었습니다."));
     }
 
-    @GetMapping("my")
+    @GetMapping("/my")
     public ResponseEntity<UserDetailResponse> getMyUser(
-            @AuthenticationPrincipal Long userId
+        @AuthenticationPrincipal Long userId
     ) {
         UserDetailResponse userDetailResponse = userService.getMyUser(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userDetailResponse);
+            .body(userDetailResponse);
     }
 }
