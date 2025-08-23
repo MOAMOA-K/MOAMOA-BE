@@ -21,6 +21,7 @@ public class FeedbackCreatedHandler {
 
     private final FeedbackRepository feedbackRepository;
     private final AiRewritePort aiRewritePort;
+    private final ObjectMapper objectMapper;
 
     @Async("feedbackExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -31,15 +32,15 @@ public class FeedbackCreatedHandler {
                 return;
             }
 
+            String aiResponse = null;
             try {
-                String aiResponse = sanitizeJson(aiRewritePort.rewrite(feedback.getContent()));
-                log.info(aiResponse);
-                ObjectMapper objectMapper = new ObjectMapper();
+                aiResponse = sanitizeJson(aiRewritePort.rewrite(feedback.getContent()));
                 AiFeedbackResponse response = objectMapper.readValue(aiResponse,
                         AiFeedbackResponse.class);
 
                 feedback.updateModifiedContent(response);
             } catch (Exception e) {
+                log.error(aiResponse);
                 log.error("AI 정제 실패 id={}", feedback.getId(), e);
 
             }

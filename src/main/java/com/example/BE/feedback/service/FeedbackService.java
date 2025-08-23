@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
@@ -47,7 +46,7 @@ public class FeedbackService {
         eventPublisher.publish(new FeedbackCreatedEvent(feedback.getId()));
     }
 
-    @Transactional
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public FeedbackResponse getFeedback(Long feedbackId) {
         FeedbackEntity feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
