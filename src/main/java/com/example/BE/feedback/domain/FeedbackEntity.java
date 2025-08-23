@@ -1,6 +1,7 @@
 package com.example.BE.feedback.domain;
 
 import com.example.BE.global.base.BaseTimeEntity;
+import com.example.BE.infra.openai.dto.AiFeedbackResponse;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -46,6 +47,9 @@ public class FeedbackEntity extends BaseTimeEntity {
     @Column(name = "modified_content", length = 500)
     private String modifiedContent;
 
+    @Column(name = "improvements", length = 500)
+    private String improvements;
+
     @Column(name = "reply", length = 255)
     private String reply;
 
@@ -71,13 +75,15 @@ public class FeedbackEntity extends BaseTimeEntity {
         this.rating = rating;
         this.content = content;
         this.modifiedContent = null;
+        this.improvements = null;
         this.reply = null;
         this.status = FeedbackStatus.UNREAD;
         this.type = type;
     }
 
-    public void updateModifiedContent(String revised) {
-        this.modifiedContent = revised;
+    public void updateModifiedContent(AiFeedbackResponse response) {
+        this.modifiedContent = response.modifiedContent();
+        this.improvements = response.improvements();
     }
 
     public void reply(String reply) {

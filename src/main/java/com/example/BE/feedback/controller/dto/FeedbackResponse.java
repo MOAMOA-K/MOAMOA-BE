@@ -12,6 +12,7 @@ public record FeedbackResponse(
         Integer rating,
         String content,
         String modifiedContent,
+        String improvements,
         String reply,
         FeedbackType type,
         FeedbackStatus status
@@ -26,6 +27,7 @@ public record FeedbackResponse(
                 entity.getRating(),
                 entity.getContent(),
                 entity.getModifiedContent(),
+                entity.getImprovements(),
                 entity.getReply(),
                 entity.getType(),
                 entity.getStatus()
