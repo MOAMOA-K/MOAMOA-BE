@@ -2,11 +2,15 @@ package com.example.BE.feedback.repository;
 
 import com.example.BE.feedback.controller.dto.FeedbackOwnerResponse;
 import com.example.BE.feedback.controller.dto.FeedbackSearchRequest;
+import com.example.BE.feedback.domain.FeedbackStatus;
+import com.example.BE.feedback.domain.FeedbackType;
 import com.example.BE.feedback.domain.QFeedbackEntity;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,12 +21,12 @@ import org.springframework.stereotype.Repository;
 public class FeedbackCustomRepositoryImpl implements FeedbackCustomRepository {
 
     private final JPAQueryFactory queryFactory;
+    private static final QFeedbackEntity f = QFeedbackEntity.feedbackEntity;
 
     @Override
     public Page<FeedbackOwnerResponse> search(FeedbackSearchRequest request) {
-        QFeedbackEntity f = QFeedbackEntity.feedbackEntity;
 
-        BooleanBuilder where = buildWhere(request, f);
+        BooleanExpression conditions = buildConditions(request);
 
         List<FeedbackOwnerResponse> content = queryFactory
                 .select(Projections.constructor(FeedbackOwnerResponse.class,
@@ -35,8 +39,8 @@ public class FeedbackCustomRepositoryImpl implements FeedbackCustomRepository {
                         f.createdAt
                 ))
                 .from(f)
-                .where(where)
-                .orderBy(f.createdAt.desc())
+                .where(conditions)
+                .orderBy(f.id.desc())
                 .offset(request.pageable().getOffset())
                 .limit(request.pageable().getPageSize())
                 .fetch();
@@ -44,27 +48,38 @@ public class FeedbackCustomRepositoryImpl implements FeedbackCustomRepository {
         Long total = queryFactory
                 .select(f.count())
                 .from(f)
-                .where(where)
+                .where(conditions)
                 .fetchOne();
 
-        return new PageImpl<>(content, request.pageable(), total == null ? 0 : total);
+        return new PageImpl<>(content, request.pageable(), Objects.requireNonNullElse(total, 0L));
     }
 
-    private BooleanBuilder buildWhere(FeedbackSearchRequest req, QFeedbackEntity f) {
-        BooleanBuilder where = new BooleanBuilder();
-        if (req.userId() != null) {
-            where.and(f.userId.eq(req.userId()));
-        }
-        if (req.storeId() != null) {
-            where.and(f.storeId.eq(req.storeId()));
-        }
-        if (req.type() != null) {
-            where.and(f.type.eq(req.type()));
-        }
-        if (req.status() != null) {
-            where.and(f.status.eq(req.status()));
-        }
-        return where;
+    private BooleanExpression buildConditions(FeedbackSearchRequest req) {
+        return Stream.of(
+                        userIdEq(req.userId()),
+                        storeIdEq(req.storeId()),
+                        typeEq(req.type()),
+                        statusEq(req.status())
+                )
+                .filter(Objects::nonNull)
+                .reduce(BooleanExpression::and)
+                .orElse(null);
+    }
+
+    private BooleanExpression userIdEq(Long userId) {
+        return userId != null ? f.userId.eq(userId) : null;
+    }
+
+    private BooleanExpression storeIdEq(Long storeId) {
+        return storeId != null ? f.storeId.eq(storeId) : null;
+    }
+
+    private BooleanExpression typeEq(FeedbackType type) {
+        return type != null ? f.type.eq(type) : null;
+    }
+
+    private BooleanExpression statusEq(FeedbackStatus status) {
+        return status != null ? f.status.eq(status) : null;
     }
 }
 
