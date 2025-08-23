@@ -19,9 +19,10 @@ public class FeedbackTemplate {
                 - 개선 사항은 반드시 2개 이상 제시, 칭찬이면 개선 사항을 제시하지 않아도 됨
                 
                 출력 형식:
-                <정제된 문장>
-                - <개선 사항1>
-                - <개선 사항2>
+                {
+                  "modifiedContent": "<정제된 문장>",
+                  "improvements": "<개선 사항1>\n<개선 사항2>"
+                }
                 """;
     }
 

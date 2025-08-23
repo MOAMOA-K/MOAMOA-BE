@@ -16,7 +16,6 @@ import com.example.BE.receipt.domain.ReceiptEntity;
 import com.example.BE.receipt.service.ReceiptService;
 import com.example.BE.user.domain.UserEntity;
 import com.example.BE.user.repository.UserRepository;
-import com.example.BE.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,10 +47,10 @@ public class FeedbackService {
         eventPublisher.publish(new FeedbackCreatedEvent(feedback.getId()));
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional
     public FeedbackResponse getFeedback(Long feedbackId) {
         FeedbackEntity feedback = feedbackRepository.findById(feedbackId)
-            .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
+                .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
 
         return FeedbackResponse.from(feedback);
     }
@@ -74,7 +73,7 @@ public class FeedbackService {
     @Transactional
     public void replyFeedback(Long feedbackId, String replyContent, Long userId) {
         FeedbackEntity feedback = feedbackRepository.findOwnedFeedback(feedbackId, userId)
-            .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
+                .orElseThrow(() -> CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND));
 
         if (feedback.getReply() != null) {
             throw CustomException.from(FeedbackErrorCode.FEEDBACK_ALREADY_REPLIED);
@@ -86,7 +85,7 @@ public class FeedbackService {
 
     private void addUserPoints(Long userId) {
         UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
+                .orElseThrow(() -> CustomException.from(UserErrorCode.NOT_FOUND));
 
         user.addPoints(300L);
     }
