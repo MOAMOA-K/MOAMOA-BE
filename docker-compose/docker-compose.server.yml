@@ -6,6 +6,8 @@ services:
       - ${ENV_FILE}
     depends_on:
       - database
+    ports:
+      - ${SPRING_PORT}:${SPRING_PORT}
     restart: "unless-stopped"
     networks:
       - moa-bridge
