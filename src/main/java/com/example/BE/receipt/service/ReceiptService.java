@@ -9,6 +9,7 @@ import com.example.BE.receipt.domain.dto.ReceiptResponse;
 import com.example.BE.receipt.domain.dto.ReceiptUpdateRequest;
 import com.example.BE.receipt.repository.ReceiptRepository;
 import com.example.BE.receipt.service.OcrService.OcrResult;
+import com.example.BE.store.domain.StoreEntity;
 import com.example.BE.store.repository.StoreRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -35,17 +36,15 @@ public class ReceiptService {
     public ReceiptResponse ocrAndCreateReceipt(Long userId, MultipartFile imageFile) {
         try {
             OcrResult ocrResult = ocrService.scanReceipt(imageFile);
-            Long storeId = storeRepository.findByCanonicalNameContaining(
-                    ocrResult.storeName().replaceAll("\\s+", ""))
-                .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
-                .getId();
+            Long storeId = getStoreIdByName(ocrResult.storeName());
 
             // 영수증 중복 등록 검증
             // ocrResult.datetime, storeId로 비교
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss");
-            LocalDateTime localDateTime = LocalDateTime.parse(ocrResult.dateTime(), dateTimeFormatter);
+            LocalDateTime localDateTime = LocalDateTime.parse(ocrResult.dateTime(),
+                dateTimeFormatter);
 
-            if(receiptRepository.existsByIssuedAtAndStoreId(localDateTime, storeId)){
+            if (receiptRepository.existsByIssuedAtAndStoreId(localDateTime, storeId)) {
                 throw CustomException.from(ReceiptErrorCode.ALREADY_EXIST_RECEIPT);
             }
 
@@ -71,10 +70,7 @@ public class ReceiptService {
         ReceiptEntity receipt = findByIdOrThrow(receiptId);
         validateReceiptOwner(userId, receipt);
 
-        Long storeId = storeRepository.findByCanonicalNameContaining(
-                request.storeName().replaceAll("\\s+", ""))
-            .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND))
-            .getId();
+        Long storeId = getStoreIdByName(request.storeName());
 
         receipt.update(storeId, request.storeName(), request.totalPrice());
         return ReceiptResponse.from(receipt);
@@ -109,6 +105,19 @@ public class ReceiptService {
         if (!Objects.equals(receipt.getUserId(), userId)) {
             throw CustomException.from(ReceiptErrorCode.FORBIDDEN_RECEIPT_ACCESS);
         }
+    }
+
+    private Long getStoreIdByName(String storeName) {
+        // replaceAll()에서 NotNull 제약 조건 피하기 위함
+        if (storeName == null) {
+            storeName = "";
+        }
+        String canonicalName = storeName.replaceAll("\\s+", "");
+
+        StoreEntity store = storeRepository.findByCanonicalName(canonicalName)
+            .orElseThrow(() -> CustomException.from(StoreErrorCode.STORE_NOT_FOUND));
+
+        return store.getId();
     }
 
     public ReceiptEntity validateReceipt(Long receiptId) {
