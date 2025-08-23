@@ -44,7 +44,7 @@ public class OcrService {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
         Map<String, Object> imageInfo = new HashMap<>();
-        if(imageFile.getContentType()==null || !imageFile.getContentType().startsWith("image")){
+        if (imageFile.getContentType() == null || !imageFile.getContentType().startsWith("image")) {
             throw CustomException.from(ReceiptErrorCode.UNAVAILABLE_FILE_TYPE);
         }
         imageInfo.put("format", imageFile.getContentType().substring(6));
@@ -63,7 +63,9 @@ public class OcrService {
             @Override
             public String getFilename() {
                 String fileName = imageFile.getOriginalFilename();
-                if(fileName==null || fileName.isBlank())    fileName="receipt";
+                if (fileName == null || fileName.isBlank()) {
+                    fileName = "receipt";
+                }
 
                 return fileName;
             }
@@ -76,25 +78,24 @@ public class OcrService {
                 headers);
             response = restTemplate.postForObject(apiUrl, requestEntity, String.class);
 
-            if(response==null || response.isBlank()){
+            if (response == null || response.isBlank()) {
                 throw new IOException("OCR API: 응답객체가 비어있습니다.");
             }
-        } catch(RestClientException e){
+        } catch (RestClientException e) {
             throw CustomException.from(ReceiptErrorCode.OCR_REQUEST_FAILED);
         }
 
         // 응답 해석
         JsonNode root = objectMapper.readTree(response);
         JsonNode images = root.path("images");
-        if(images.isNull() || images.isEmpty()){
+        if (images.isNull() || images.isEmpty()) {
             throw new IOException("OCR API: image[] 객체가 비어있습니다.");
         }
 
         JsonNode fields = images.get(0).path("fields");
-        if(fields.isNull() || fields.isEmpty()){
+        if (fields.isNull() || fields.isEmpty()) {
             throw new IOException("OCR API: fields[] 객체가 비어있습니다.");
         }
-
 
         StringBuilder storeNameBuilder = new StringBuilder();
         StringBuilder addressBuilder = new StringBuilder();
@@ -162,5 +163,6 @@ public class OcrService {
     }
 
     public record OcrResult(String storeName, String address, String dateTime, String totalPrice) {
+
     }
 }
