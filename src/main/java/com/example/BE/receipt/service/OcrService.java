@@ -44,7 +44,10 @@ public class OcrService {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
         Map<String, Object> imageInfo = new HashMap<>();
-        imageInfo.put("format", imageFile.getContentType().split("/")[1]);
+        if (imageFile.getContentType() == null || !imageFile.getContentType().startsWith("image")) {
+            throw CustomException.from(ReceiptErrorCode.UNAVAILABLE_FILE_TYPE);
+        }
+        imageInfo.put("format", imageFile.getContentType().substring(6));
         imageInfo.put("name", "receipt");
 
         Map<String, Object> messageMap = new HashMap<>();
@@ -59,7 +62,12 @@ public class OcrService {
         ByteArrayResource imageResource = new ByteArrayResource(imageFile.getBytes()) {
             @Override
             public String getFilename() {
-                return imageFile.getOriginalFilename();
+                String fileName = imageFile.getOriginalFilename();
+                if (fileName == null || fileName.isBlank()) {
+                    fileName = "receipt";
+                }
+
+                return fileName;
             }
         };
         body.add("file", imageResource);
@@ -69,13 +77,26 @@ public class OcrService {
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body,
                 headers);
             response = restTemplate.postForObject(apiUrl, requestEntity, String.class);
-        } catch(RestClientException e){
+
+            if (response == null || response.isBlank()) {
+                throw new IOException("OCR API: 응답객체가 비어있습니다.");
+            }
+        } catch (RestClientException e) {
             throw CustomException.from(ReceiptErrorCode.OCR_REQUEST_FAILED);
         }
 
         // 응답 해석
         JsonNode root = objectMapper.readTree(response);
-        JsonNode fields = root.path("images").get(0).path("fields");
+        JsonNode images = root.path("images");
+        if (images.isNull() || images.isEmpty()) {
+            throw new IOException("OCR API: image[] 객체가 비어있습니다.");
+        }
+
+        JsonNode fields = images.get(0).path("fields");
+        if (fields.isNull() || fields.isEmpty()) {
+            throw new IOException("OCR API: fields[] 객체가 비어있습니다.");
+        }
+
         StringBuilder storeNameBuilder = new StringBuilder();
         StringBuilder addressBuilder = new StringBuilder();
         StringBuilder dateTimeBuilder = new StringBuilder();
@@ -142,5 +163,6 @@ public class OcrService {
     }
 
     public record OcrResult(String storeName, String address, String dateTime, String totalPrice) {
+
     }
 }
