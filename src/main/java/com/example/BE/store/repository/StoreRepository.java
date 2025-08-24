@@ -12,6 +12,8 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     // 키워드 검색 (공백 없는 이름으로 검색)
     Optional<StoreEntity> findByCanonicalName(String canonicalName);
 
+    Optional<StoreEntity> findByUserId(Long userId);
+
     // 이거는 근데 AI 도움을 받은 거라 테스트 좀 해 봐야 해요.
     // 지도 검색을 위한 공간 쿼리 (MySQL 기준)
     @Query(value = "SELECT * FROM stores s " +
