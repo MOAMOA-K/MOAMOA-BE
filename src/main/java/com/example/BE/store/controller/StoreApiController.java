@@ -42,6 +42,16 @@ public class StoreApiController {
             .body(response);
     }
 
+    // 사장님용: 본인 가게 정보 조회
+    @GetMapping("/my")
+    public ResponseEntity<StoreResponse> getMyStore(
+        @AuthenticationPrincipal Long userId
+    ){
+        StoreResponse response = storeService.getMyStore(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(response);
+    }
+
     // 가게별 평균 평점 조회
     @GetMapping("/{storeId}/ratings")
     public ResponseEntity<?> getRatings(

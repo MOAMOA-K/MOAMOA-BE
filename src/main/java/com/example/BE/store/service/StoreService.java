@@ -52,6 +52,13 @@ public class StoreService {
         return StoreDetailResponse.from(storeResponse, menuList, announcementList);
     }
 
+    public StoreResponse getMyStore(Long userId){
+        StoreEntity store = storeRepository.findByUserId(userId)
+            .orElseThrow(()->CustomException.from(StoreErrorCode.STORE_NOT_FOUND));
+
+        return StoreResponse.from(store);
+    }
+
     public Double getAverageRatings(Long storeId) {
         StoreEntity store = findByIdOrThrow(storeId);
         List<FeedbackEntity> list = feedbackRepository.findAllByStoreId(storeId);
