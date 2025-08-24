@@ -81,7 +81,7 @@ public class FeedbackApiController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("{feedbackId}/reply")
+    @PostMapping("/{feedbackId}/reply")
     public ResponseEntity<?> replyFeedback(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long feedbackId,
