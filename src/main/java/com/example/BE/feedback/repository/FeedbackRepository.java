@@ -12,6 +12,7 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Long>,
 
     List<FeedbackEntity> findAllByIdIn(List<Long> feedbackIds);
 
+    List<FeedbackEntity> findAllByStoreId(Long storeId);
 
     @Query("""
             SELECT new com.example.BE.feedback.controller.dto.FeedbackDetailResponse(

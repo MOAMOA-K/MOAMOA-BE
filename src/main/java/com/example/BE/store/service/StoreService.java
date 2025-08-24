@@ -2,6 +2,8 @@ package com.example.BE.store.service;
 
 import com.example.BE.announcement.domain.dto.AnnouncementResponse;
 import com.example.BE.announcement.service.AnnouncementService;
+import com.example.BE.feedback.domain.FeedbackEntity;
+import com.example.BE.feedback.repository.FeedbackRepository;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.StoreErrorCode;
 import com.example.BE.menu.domain.dto.MenuResponse;
@@ -29,6 +31,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
     private final AnnouncementService announcementService;
+    private final FeedbackRepository feedbackRepository;
 
     @Transactional
     public StoreResponse createStore(StoreCreateRequest request, Long userId) {
@@ -47,6 +50,21 @@ public class StoreService {
             storeId);
 
         return StoreDetailResponse.from(storeResponse, menuList, announcementList);
+    }
+
+    public Double getAverageRatings(Long storeId) {
+        StoreEntity store = findByIdOrThrow(storeId);
+        List<FeedbackEntity> list = feedbackRepository.findAllByStoreId(storeId);
+        if (list.isEmpty()) {
+            return 0.0;
+        }
+
+        int sum = 0;
+        for (FeedbackEntity e : list) {
+            sum += e.getRating();
+        }
+
+        return (double) (sum / list.size());
     }
 
     public List<StoreResponse> searchStores(double lat, double lon, String keyword) {
@@ -79,7 +97,7 @@ public class StoreService {
     }
 
     private void validateStoreOwner(StoreEntity store, Long userId) {
-        if(!Objects.equals(store.getUserId(), userId)){
+        if (!Objects.equals(store.getUserId(), userId)) {
             throw CustomException.from(StoreErrorCode.FORBIDDEN_STORE_ACCESS);
         }
     }

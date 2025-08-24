@@ -42,6 +42,16 @@ public class StoreApiController {
             .body(response);
     }
 
+    // 가게별 평균 평점 조회
+    @GetMapping("/{storeId}/ratings")
+    public ResponseEntity<?> getRatings(
+        @PathVariable Long storeId
+    ){
+        Double avgRating = storeService.getAverageRatings(storeId);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(avgRating);
+    }
+
     // 인접 가게 리스트 조회
     @GetMapping("/list")
     public ResponseEntity<List<StoreResponse>> getStoreList(
