@@ -24,7 +24,7 @@ public class UserApiController {
 
     private final UserService userService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<UserResponse> getUser(
         @AuthenticationPrincipal Long userId
     ) {
@@ -34,7 +34,7 @@ public class UserApiController {
     }
 
     // 유저 프로필 수정
-    @PatchMapping("/")
+    @PatchMapping
     public ResponseEntity<UserResponse> updateUser(
         @AuthenticationPrincipal Long userId,
         @Valid @RequestBody UserUpdateRequest request
@@ -45,7 +45,7 @@ public class UserApiController {
     }
 
     // 유저 삭제
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<MessageResponse> deleteUser(
         @AuthenticationPrincipal Long userId
     ) {
