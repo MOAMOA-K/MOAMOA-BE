@@ -61,12 +61,7 @@ public class FeedbackService {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<FeedbackDetailResponse> getMyFeedbacks(Long userId) {
-        List<FeedbackDetailResponse> feedbacks = feedbackRepository.findMyFeedbacks(userId);
-        if (feedbacks.isEmpty()) {
-            throw CustomException.from(FeedbackErrorCode.FEEDBACK_NOT_FOUND);
-        }
-
-        return feedbacks;
+        return feedbackRepository.findMyFeedbacks(userId);
     }
 
     @Transactional

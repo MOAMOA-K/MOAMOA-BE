@@ -50,6 +50,9 @@ spring:
 # 요청 응답에 모두 한글 인코딩 강제 적용
 server:
   servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 30MB
     encoding:
       charset: UTF-8
       enabled: true
