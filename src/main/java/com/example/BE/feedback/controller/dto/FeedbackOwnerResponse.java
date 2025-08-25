@@ -10,6 +10,7 @@ public record FeedbackOwnerResponse(
         Integer rating,
         String modifiedContent,
         String reply,
+        String improvements,
         FeedbackType type,
         FeedbackStatus status,
         @JsonFormat(pattern = "yyyy-MM-dd")
