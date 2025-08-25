@@ -5,6 +5,7 @@ import java.util.List;
 
 public record CouponResponse(
         Long id,
+        String storeName,
         String name,
         String description,
         Long pointCost,
@@ -15,6 +16,7 @@ public record CouponResponse(
         return entity.stream()
                 .map(coupon -> new CouponResponse(
                         coupon.getId(),
+                        coupon.getStoreName(),
                         coupon.getName(),
                         coupon.getDescription(),
                         coupon.getPointCost(),
