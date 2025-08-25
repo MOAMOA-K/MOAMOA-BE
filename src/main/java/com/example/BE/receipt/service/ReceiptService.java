@@ -40,7 +40,7 @@ public class ReceiptService {
 
             // 영수증 중복 등록 검증
             // ocrResult.datetime, storeId로 비교
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss");
             LocalDateTime localDateTime = LocalDateTime.parse(ocrResult.dateTime(),
                 dateTimeFormatter);
 
