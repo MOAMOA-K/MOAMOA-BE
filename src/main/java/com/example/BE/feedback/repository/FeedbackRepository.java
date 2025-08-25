@@ -21,6 +21,7 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Long>,
                 f.rating,
                 f.content,
                 f.reply,
+                f.improvements,
                 f.createdAt
             )
             FROM FeedbackEntity f
