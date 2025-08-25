@@ -34,6 +34,7 @@ public class FeedbackCustomRepositoryImpl implements FeedbackCustomRepository {
                         f.rating,
                         f.modifiedContent,
                         f.reply,
+                        f.improvements,
                         f.type,
                         f.status,
                         f.createdAt

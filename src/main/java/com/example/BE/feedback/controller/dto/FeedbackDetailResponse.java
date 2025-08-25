@@ -9,6 +9,7 @@ public record FeedbackDetailResponse(
         Integer rating,
         String content,
         String reply,
+        String improvements,
         @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDateTime createdAt
 ) {
