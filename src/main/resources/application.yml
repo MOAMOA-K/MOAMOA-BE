@@ -31,7 +31,7 @@ spring:
   jwt:
     secret: ${SECRET_KEY}
     # 토큰 유효기간: 1시간
-    expiryTime: 3600000
+    expiryTime: 28800000
 
   ai:
     openai:
