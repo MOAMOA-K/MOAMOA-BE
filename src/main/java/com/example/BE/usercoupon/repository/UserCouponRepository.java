@@ -19,6 +19,7 @@ public interface UserCouponRepository extends JpaRepository<UserCouponEntity, Lo
                     SELECT new com.example.BE.usercoupon.controller.dto.UserCouponResponse(
                         uc.id,
                         c.storeName,
+                        c.description,
                         c.name,
                         c.validUntil,
                         uc.createdAt

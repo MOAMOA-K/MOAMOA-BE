@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record UserCouponResponse(
         Long userCouponId,
         String storeName,
+        String description,
         String couponName,
         LocalDate validUntil,
         @JsonFormat(pattern = "yyyy-MM-dd")
