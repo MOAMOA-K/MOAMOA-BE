@@ -4,6 +4,8 @@ import com.example.BE.coupon.domain.CouponEntity;
 import com.example.BE.coupon.repository.CouponRepository;
 import com.example.BE.global.exception.CustomException;
 import com.example.BE.global.exception.errorCode.CouponErrorCode;
+import com.example.BE.global.tx.EventTxPublisher;
+import com.example.BE.user.domain.dto.UserPointEvent;
 import com.example.BE.usercoupon.controller.dto.UserCouponCreateRequest;
 import com.example.BE.usercoupon.controller.dto.UserCouponResponse;
 import com.example.BE.usercoupon.controller.dto.UserCouponUseRequest;
@@ -21,6 +23,7 @@ public class UserCouponService {
 
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
+    private final EventTxPublisher eventPublisher;
 
     @Transactional
     public void create(UserCouponCreateRequest request, Long userId) {
@@ -38,7 +41,9 @@ public class UserCouponService {
     public void use(UserCouponUseRequest request, Long userId) {
         UserCouponEntity userCoupon = findById(request.userCouponId());
 
-        validateCoupon(userCoupon, request.password(), userId);
+        Long points = validateCoupon(userCoupon, request.password(), userId);
+        eventPublisher.publish(new UserPointEvent(userId, points));
+        
         markAsUsed(userCoupon);
     }
 
@@ -69,7 +74,7 @@ public class UserCouponService {
                 .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
     }
 
-    private void validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
+    private Long validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
         validateUserCoupon(userCoupon, userId);
 
         CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
@@ -78,6 +83,7 @@ public class UserCouponService {
         if (!coupon.isValidPassword(password)) {
             throw CustomException.from(CouponErrorCode.INVALID_PASSWORD);
         }
+        return coupon.getPointCost();
     }
 
     private void validateUserCoupon(UserCouponEntity userCoupon, Long userId) {
