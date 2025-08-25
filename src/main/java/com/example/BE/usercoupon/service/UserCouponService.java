@@ -34,16 +34,14 @@ public class UserCouponService {
             throw CustomException.from(CouponErrorCode.EXPIRED);
         }
 
+        eventPublisher.publish(new UserPointEvent(userId, coupon.getPointCost()));
         userCouponRepository.save(request.toEntity(userId));
     }
 
     @Transactional
     public void use(UserCouponUseRequest request, Long userId) {
         UserCouponEntity userCoupon = findById(request.userCouponId());
-
-        Long points = validateCoupon(userCoupon, request.password(), userId);
-        eventPublisher.publish(new UserPointEvent(userId, points));
-        
+        validateCoupon(userCoupon, request.password(), userId);
         markAsUsed(userCoupon);
     }
 
@@ -74,7 +72,7 @@ public class UserCouponService {
                 .orElseThrow(() -> CustomException.from(CouponErrorCode.NOT_FOUND));
     }
 
-    private Long validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
+    private void validateCoupon(UserCouponEntity userCoupon, String password, Long userId) {
         validateUserCoupon(userCoupon, userId);
 
         CouponEntity coupon = couponRepository.findById(userCoupon.getCouponId())
@@ -83,7 +81,6 @@ public class UserCouponService {
         if (!coupon.isValidPassword(password)) {
             throw CustomException.from(CouponErrorCode.INVALID_PASSWORD);
         }
-        return coupon.getPointCost();
     }
 
     private void validateUserCoupon(UserCouponEntity userCoupon, Long userId) {
